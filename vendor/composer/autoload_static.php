@@ -41,32 +41,7 @@ class ComposerStaticInit98b2ef19afb75cc0917be9f0cf7a94db
     );
 
     public static $classMap = array (
-        'App\\Controllers\\Controller' => __DIR__ . '/../..' . '/app/Controllers/Controller.php',
-        'App\\Controllers\\HomeController' => __DIR__ . '/../..' . '/app/Controllers/HomeController.php',
         'Composer\\InstalledVersions' => __DIR__ . '/..' . '/composer/InstalledVersions.php',
-        'Lynx\\System\\Controller\\Controller' => __DIR__ . '/..' . '/framework/System/Controller/Controller.php',
-        'Lynx\\System\\Database\\Connection\\Connect' => __DIR__ . '/..' . '/framework/System/Database/Connection/Connect.php',
-        'Lynx\\System\\Database\\SQL\\DATASET' => __DIR__ . '/..' . '/framework/System/Database/SQL/DATASET.php',
-        'Lynx\\System\\Debug\\Debugger' => __DIR__ . '/..' . '/framework/System/Debug/Debugger.php',
-        'Lynx\\System\\Exception\\ApplicationException' => __DIR__ . '/..' . '/framework/System/Exception/ApplicationException.php',
-        'Lynx\\System\\File\\File' => __DIR__ . '/..' . '/framework/System/File/File.php',
-        'Lynx\\System\\Http\\HttpAgent' => __DIR__ . '/..' . '/framework/System/Http/HttpAgent.php',
-        'Lynx\\System\\Localization\\Lang' => __DIR__ . '/..' . '/framework/System/Localization/Lang.php',
-        'Lynx\\System\\Mail\\Mail' => __DIR__ . '/..' . '/framework/System/Mail/Mail.php',
-        'Lynx\\System\\Middleware\\Middleware' => __DIR__ . '/..' . '/framework/System/Middleware/Middleware.php',
-        'Lynx\\System\\Model\\Model' => __DIR__ . '/..' . '/framework/System/Model/Model.php',
-        'Lynx\\System\\Request\\Request' => __DIR__ . '/..' . '/framework/System/Request/Request.php',
-        'Lynx\\System\\Routes\\Route' => __DIR__ . '/..' . '/framework/System/Routes/Route.php',
-        'Lynx\\System\\Security\\FormProtection' => __DIR__ . '/..' . '/framework/System/Security/FormProtection.php',
-        'Lynx\\System\\Session\\Session' => __DIR__ . '/..' . '/framework/System/Session/Session.php',
-        'Lynx\\System\\Set\\Set' => __DIR__ . '/..' . '/framework/System/Set/Set.php',
-        'Lynx\\System\\View\\View' => __DIR__ . '/..' . '/framework/System/View/View.php',
-        'PHPMailer\\PHPMailer\\Exception' => __DIR__ . '/..' . '/phpmailer/phpmailer/src/Exception.php',
-        'PHPMailer\\PHPMailer\\OAuth' => __DIR__ . '/..' . '/phpmailer/phpmailer/src/OAuth.php',
-        'PHPMailer\\PHPMailer\\OAuthTokenProvider' => __DIR__ . '/..' . '/phpmailer/phpmailer/src/OAuthTokenProvider.php',
-        'PHPMailer\\PHPMailer\\PHPMailer' => __DIR__ . '/..' . '/phpmailer/phpmailer/src/PHPMailer.php',
-        'PHPMailer\\PHPMailer\\POP3' => __DIR__ . '/..' . '/phpmailer/phpmailer/src/POP3.php',
-        'PHPMailer\\PHPMailer\\SMTP' => __DIR__ . '/..' . '/phpmailer/phpmailer/src/SMTP.php',
     );
 
     public static function getInitializer(ClassLoader $loader)

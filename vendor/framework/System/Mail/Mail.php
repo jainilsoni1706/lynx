@@ -3,8 +3,6 @@
 namespace Lynx\System\Mail;
 
 use Lynx\System\Exception\ApplicationException;
-use PHPMailer\PHPMailer\PHPMailer;
-use PHPMailer\PHPMailer\Exception;
 use Lynx\System\View\View;
 use Lynx\System\Set\Set;
 
