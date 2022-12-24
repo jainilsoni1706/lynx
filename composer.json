@@ -20,6 +20,7 @@
     ],
     "minimum-stability": "dev",
     "require": {
+        "php": ">=7.0.0",
         "phpmailer/phpmailer": "dev-master"
     }
 }
