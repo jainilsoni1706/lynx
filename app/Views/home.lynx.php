@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet"/>
+    <link href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700&display=swap" rel="stylesheet"/>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/6.0.1/mdb.min.css"rel="stylesheet"/>
+    <title><?=$moduleName?></title>
+</head>
+<body>
+    
+<!-- Navbar -->
+<nav class="navbar navbar-expand-lg navbar-light bg-light">
+  <!-- Container wrapper -->
+  <div class="container">
+    <!-- Navbar brand -->
+    <a class="navbar-brand me-2" href="https://mdbgo.com/">
+        <h4><?=$moduleName?></h4>
+
+        <h3 style="margin-left:20px;"><?=translate("greetings")?></h3>
+    </a>
+
+    <!-- Toggle button -->
+    <button
+      class="navbar-toggler"
+      type="button"
+      data-mdb-toggle="collapse"
+      data-mdb-target="#navbarButtonsExample"
+      aria-controls="navbarButtonsExample"
+      aria-expanded="false"
+      aria-label="Toggle navigation"
+    >
+      <i class="fas fa-bars"></i>
+    </button>
+
+    <!-- Collapsible wrapper -->
+    <div class="collapse navbar-collapse" id="navbarButtonsExample">
+      <!-- Left links -->
+      <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+      </ul>
+      <!-- Left links -->
+
+      <div class="d-flex align-items-center">
+      
+        <button type="button" class="btn btn-primary me-3">
+          <?=$date?>
+        </button>
+        <a
+          class="btn btn-dark px-3"
+          href="https://github.com/mdbootstrap/mdb-ui-kit"
+          role="button"
+          ><i class="fab fa-github"></i
+        ></a>
+      </div>
+    </div>
+    <!-- Collapsible wrapper -->
+  </div>
+  <!-- Container wrapper -->
+</nav>
+<!-- Navbar -->
+
+
+
+  <div class="container">
+
+  <form action="<?=url('change-language')?>" method="POST"> <?=csrf_token()?>
+    <select name="language" id="language" class="form-select" aria-label="Default select example">
+    <?php  
+      foreach(LANGUAGES as $language) {
+        echo "<option value='$language'>$language</option>";
+      }
+    ?>
+    </select>
+    <button type="submit" class="btn btn-primary me-3" style="margin-top:100px;">
+      Change Language
+    </button>
+  </form>
+
+    <a href="<?=url('create')?>">
+        <button type="button" class="btn btn-primary me-3" style="margin-top:100px;">
+          Create 
+        </button>
+    </a>
+  </div>
+
+
+
+<script  type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/6.0.1/mdb.min.js"></script>
+</body>
+</html>

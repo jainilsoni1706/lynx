@@ -1,0 +1,25 @@
+{
+    "name": "jainilsoni1706/lynx",
+    "description": "PHP Micro Framework",
+    "type": "library",
+    "license": "MIT",
+    "autoload": {
+        "psr-4": {
+            "Lynx\\System\\": "vendor/framework/System",
+            "App\\": "app/"
+        },
+        "files": [
+            "vendor/framework/System/General/General.php"
+        ]
+    },
+    "authors": [
+        {
+            "name": "jainilsoni1706",
+            "email": "jainilsoni1706@gmail.com"
+        }
+    ],
+    "minimum-stability": "dev",
+    "require": {
+        "phpmailer/phpmailer": "dev-master"
+    }
+}
