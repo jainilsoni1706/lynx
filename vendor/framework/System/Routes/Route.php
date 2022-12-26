@@ -4,6 +4,7 @@ namespace Lynx\System\Routes;
 
 use Lynx\System\Exception\ApplicationException;
 use Lynx\System\Request\Request;
+use App\Middleware\Handler;
 
 class Route{
 
@@ -24,6 +25,7 @@ class Route{
 
                                     $app = new $array[0];
                                     $app->{$array[1]}(new Request);
+                                    die;
 
                                 } else {
                                     return new ApplicationException("Method not allowed.", "Lynx/routes/mapper.php");
@@ -59,8 +61,11 @@ class Route{
                                 if ($_SERVER['REQUEST_METHOD'] == "POST") {
                                     if (isset($_POST['_token'])) {
                                         if ($_POST['_token'] == $_SESSION['_token']) {
+
                                             $app = new $array[0];
                                             $app->{$array[1]}(new Request);
+                                            die;
+                                            
                                         } else {
                                             return new ApplicationException("CSRF token mismatch.", "Lynx/routes/mapper.php");
                                         }
@@ -85,13 +90,39 @@ class Route{
             }
     }
 
+    public function route($name)
+    {
+        return $this;
+    }
   
     public function group($prefix, $callback){
         $callback();
     }
 
-    public function middleware($middleware){
-        $middleware = new $middleware;
+    public static function middleware($middleware, $condition, $callback){
+
+        $middlewaresList = new Handler();
+
+        if(!in_array($middleware, $middlewaresList->group)){
+            return new ApplicationException("Class $middleware not found.", "Lynx/System/Exception/ApplicationException.php");
+        }
+
+        try {
+            $middleware = new $middleware;
+        } catch (\Throwable $th) {
+            return new ApplicationException("Class $middleware not found.", "Lynx/System/Exception/ApplicationException.php");
+        }
+
+        try {
+            if($middleware->handle(new Request, $condition)){
+                $callback();
+            }
+        } catch (\Throwable $th) {
+            return new ApplicationException("Method handler not found in class $middleware not found.", "Lynx/System/Exception/ApplicationException.php");
+        }
+
+
+
     }
 
 }

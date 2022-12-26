@@ -3,6 +3,7 @@
 namespace Lynx\System\Controller;
 
 session_start();
+error_reporting(0);
 
 use Lynx\System\Session\Session;
 

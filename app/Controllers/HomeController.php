@@ -22,7 +22,6 @@ class HomeController extends Controller{
 
     public function index()
     {
-
         $moduleName = $this->moduleName . " - Home";
         $date = date('Y-m-d H:i:s');
 

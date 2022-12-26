@@ -6,5 +6,26 @@ $vendorDir = dirname(__DIR__);
 $baseDir = dirname($vendorDir);
 
 return array(
+    'App\\Controllers\\Controller' => $baseDir . '/app/Controllers/Controller.php',
+    'App\\Controllers\\HomeController' => $baseDir . '/app/Controllers/HomeController.php',
+    'App\\Middleware\\Authenticable' => $baseDir . '/app/Middleware/Authenticable.php',
+    'App\\Middleware\\Handler' => $baseDir . '/app/Middleware/Handler.php',
     'Composer\\InstalledVersions' => $vendorDir . '/composer/InstalledVersions.php',
+    'Lynx\\System\\Controller\\Controller' => $vendorDir . '/framework/System/Controller/Controller.php',
+    'Lynx\\System\\Database\\Connection\\Connect' => $vendorDir . '/framework/System/Database/Connection/Connect.php',
+    'Lynx\\System\\Database\\SQL\\DATASET' => $vendorDir . '/framework/System/Database/SQL/DATASET.php',
+    'Lynx\\System\\Debug\\Debugger' => $vendorDir . '/framework/System/Debug/Debugger.php',
+    'Lynx\\System\\Exception\\ApplicationException' => $vendorDir . '/framework/System/Exception/ApplicationException.php',
+    'Lynx\\System\\File\\File' => $vendorDir . '/framework/System/File/File.php',
+    'Lynx\\System\\Http\\HttpAgent' => $vendorDir . '/framework/System/Http/HttpAgent.php',
+    'Lynx\\System\\Localization\\Lang' => $vendorDir . '/framework/System/Localization/Lang.php',
+    'Lynx\\System\\Mail\\Mail' => $vendorDir . '/framework/System/Mail/Mail.php',
+    'Lynx\\System\\Middleware\\Middleware' => $vendorDir . '/framework/System/Middleware/Middleware.php',
+    'Lynx\\System\\Model\\Model' => $vendorDir . '/framework/System/Model/Model.php',
+    'Lynx\\System\\Request\\Request' => $vendorDir . '/framework/System/Request/Request.php',
+    'Lynx\\System\\Routes\\Route' => $vendorDir . '/framework/System/Routes/Route.php',
+    'Lynx\\System\\Security\\FormProtection' => $vendorDir . '/framework/System/Security/FormProtection.php',
+    'Lynx\\System\\Session\\Session' => $vendorDir . '/framework/System/Session/Session.php',
+    'Lynx\\System\\Set\\Set' => $vendorDir . '/framework/System/Set/Set.php',
+    'Lynx\\System\\View\\View' => $vendorDir . '/framework/System/View/View.php',
 );

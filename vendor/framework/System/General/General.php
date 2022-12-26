@@ -8,20 +8,20 @@ use Lynx\System\File\File;
     }
 
 
-    function dump($var, $die = false)
+    function dump()
     {
+        $var = func_get_args();
         echo "<pre style='background-color: #000;color:#00ff00;padding:10px;font-size:20px;'>";
         print_r($var);
         echo "</pre>";
-        if ($die) {
-            die();
-        }
+        die();
     }
 
 
-    function dd($var)
+    function dd()
     {
-        dump($var, true);
+        $var = func_get_args();
+        dump($var);
     }
 
     function generateToken()
@@ -89,11 +89,11 @@ use Lynx\System\File\File;
 
     function public_path($file = null) {
         if ($file == null) {
-            return __DIR__ . '../../../../../public/';
+            $file = root_path() . '/public/';
         } else {
-            $file = str_replace('/', '\\', $file);
-            return __DIR__ . '../../../../../public/' . $file;
+            $file = root_path() . '/public/' . $file;
         }
+        return str_replace('/', '\\', $file);
     }
 
     function root_path()
@@ -126,6 +126,48 @@ use Lynx\System\File\File;
         }
     }
 
+    function abort($code) {
+        if ($code == 404) {
+            return error("Page not found","Lynx/System/Exception/RequestException.php",404);
+        } else if ($code == 401) {
+            return error("Unauthorized Access","Lynx/System/Exception/RequestException.php",403);
+        } else if ($code == 403) {
+            return error("Forbidden","Lynx/System/Exception/RequestException.php",403);
+        } else if ($code == 500) {
+            return error("Internal Server Error","Lynx/System/Exception/RequestException.php",500);
+        } else {
+            return error("Unknown Error","Lynx/System/Exception/RequestException.php",500);
+        }
+    }
+
+    function get($x)
+    {
+        if (isset($_GET[$x])) {
+            return $_GET[$x];
+        } else {
+            return null;
+        }
+    }
+
+    function post($x)
+    {
+        if (isset($_POST[$x])) {
+            return $_POST[$x];
+        } else {
+            return null;
+        }
+    }
+
+    function request($x)
+    {
+        if (isset($_REQUEST[$x])) {
+            return $_REQUEST[$x];
+        } else {
+            return null;
+        }
+    }
+
+    
 
 
 
@@ -149,7 +191,20 @@ use Lynx\System\File\File;
     }
 
     function autoloader() {
+        //functions
         getAllLanguages();
+
+        //constants
+        define("LYNX_VERSION", "1.0.0"); 
+        
+        if (env('APP_NAME') !== null) {
+            define("APP_NAME", env('APP_NAME'));
+        } else {
+            define("APP_NAME", "Lynx");
+        }
+
+        
+
     }
 
     autoloader();
