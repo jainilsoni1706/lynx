@@ -8,7 +8,7 @@ use Lynx\System\Exception\ApplicationException;
 class DATASET {
 
     protected $table;
-    protected $columns;
+    protected $columns = "*";
     protected $where;
 
     public static function table($table)
@@ -27,14 +27,32 @@ class DATASET {
         return $this;
     }
 
-    public function where($column, $operator = "=", $value)
+    public function where()
     {
        try {
-        $this->where = "WHERE {$column} {$operator} {$value}";
-        return $this;
-       } catch (\PDOException $e) {
-           throw new ApplicationException($e->getMessage(),"Lynx/Framework/System/Exception/DatabaseException.php",500);
-       }
+
+            $args = func_get_args();
+
+            if (count($args) > 3 && count($args) < 2) {
+                throw new ApplicationException("Invalid number of arguments passed to where method", "Lynx/Framework/System/Exception/DatabaseException.php", 500);
+            }
+
+            if (count($args) == 3) {
+                $column = $args[0];
+                $operator = $args[1];
+                $value = $args[2];
+            } else {
+                $column = $args[0];
+                $operator = "=";
+                $value = $args[1];
+            }
+
+            $this->where = "WHERE $column $operator $value";
+            return $this;
+
+        } catch (ApplicationException $e) {
+            echo $e->getMessage();
+        }
     }
 
     public function orderBy($column, $order = "ASC")
@@ -221,6 +239,17 @@ class DATASET {
             }
         } catch (\PDOException $e) {
             throw new ApplicationException($e->getMessage(),"Lynx/Framework/System/Exception/DatabaseException.php",500);
+        }
+    }
+
+    // query static method
+    public static function query($sql)
+    {
+        $query = Connect::query($sql);
+        if($query->rowCount() > 0){
+            return $query->fetchAll();
+        }else{
+            return 0;
         }
     }
 

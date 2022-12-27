@@ -110,7 +110,7 @@ class Route{
         try {
             $middleware = new $middleware;
         } catch (\Throwable $th) {
-            return new ApplicationException("Class $middleware not found.", "Lynx/System/Exception/ApplicationException.php");
+            return new ApplicationException($th->getMessage(), "Lynx/System/Exception/ApplicationException.php");
         }
 
         try {
@@ -118,7 +118,7 @@ class Route{
                 $callback();
             }
         } catch (\Throwable $th) {
-            return new ApplicationException("Method handler not found in class $middleware not found.", "Lynx/System/Exception/ApplicationException.php");
+            return new ApplicationException($th->getMessage(), "Lynx/System/Exception/ApplicationException.php");
         }
 
 

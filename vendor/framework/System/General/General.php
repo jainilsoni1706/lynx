@@ -11,7 +11,7 @@ use Lynx\System\File\File;
     function dump()
     {
         $var = func_get_args();
-        echo "<pre style='background-color: #000;color:#00ff00;padding:10px;font-size:20px;'>";
+        echo "<pre style='background-color: #000;color:#00ff00;padding:10px;font-size:15px;'>";
         print_r($var);
         echo "</pre>";
         die();
@@ -201,6 +201,12 @@ use Lynx\System\File\File;
             define("APP_NAME", env('APP_NAME'));
         } else {
             define("APP_NAME", "Lynx");
+        }
+
+        if (env('CACHE_PATH') !== null) {
+            define("CACHE_PATH", env('CACHE_PATH'));
+        } else {
+            define("CACHE_PATH", root_path() . '/storage/cache');
         }
 
         

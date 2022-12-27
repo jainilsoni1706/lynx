@@ -2,14 +2,16 @@
 
 namespace App\Controllers;
 
-use Lynx\System\Database\SQL\DATASET;
-use Lynx\System\Request\Request;
 use App\Controllers\Controller;
-use Lynx\System\Http\HttpAgent;
-use Lynx\System\View\View;
-use Lynx\System\Session\Session;
-use Lynx\System\Set\Set;
+use Lynx\System\Database\SQL\DATASET;
 use Lynx\System\Localization\Lang;
+use Lynx\System\Request\Request;
+use Lynx\System\Session\Session;
+use Lynx\System\Http\HttpAgent;
+use Lynx\System\Debug\Debugger;
+use Lynx\System\View\View;
+use Lynx\System\Set\Set;
+use App\Models\User;
 
 class HomeController extends Controller{
 
@@ -35,16 +37,22 @@ class HomeController extends Controller{
 
         return View::render('create', compact('moduleName', 'date'));
     }
-
-    public function store(Request $request)
-    {
-
-    }
-
+ 
     public function changeLanguage(Request $request)
     {   
         Lang::setAppLocale($request->post('language'));
         return redirect('');
     }
+    
+    public function store(Request $request)
+    {
 
+    }
+
+    public function model(Request $request)
+    {
+        $collection = new Set(User::all());
+        $test = $collection->chunk(3);
+        dd(Set::collect($test)->collapse());
+    }
 }

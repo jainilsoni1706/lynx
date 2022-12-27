@@ -19,5 +19,5 @@ class Debugger {
     {
         self::dump($var, true);
     }
-
+    
 }
