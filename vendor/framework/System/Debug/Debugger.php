@@ -4,20 +4,10 @@ namespace Lynx\System\Debug;
 
 class Debugger {
 
-    public static function dump($var, $die = false)
-    {
-        echo "<pre style='background-color: #000;color:#00ff00;padding:10px;font-size:20px;'>";
-        print_r($var);
-        echo "</pre>";
-        if ($die) {
-            die();
-        }
+    public static function dd() {
+        $args = func_get_args();
+        dd($args);
     }
 
-
-    public static function dd($var)
-    {
-        self::dump($var, true);
-    }
     
 }

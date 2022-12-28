@@ -130,13 +130,49 @@ class Set {
         return $outerWrapper;
     }
 
-    public function collapse($array = null)
+    public function hasArrayInside() : int
     {
-        if ($array == null) {
-            $array = $this->items;
-        } else {
-            $array = $array;
+        $hasArray = 0;
+        foreach (self::$collection as $item) {
+            if (is_array($item)) {
+                $hasArray = 1;
+            }
         }
+
+        return $hasArray;
+    }
+
+    public function hasObjectInside() : int
+    {
+        $hasObject = 0;
+        foreach (self::$collection as $item) {
+            if (is_object($item)) {
+                $hasObject = 1;
+            }
+        }
+
+        return $hasObject;
     }
     
+
+    public function arrayHasLevel($levelCount = 0) : int 
+    {
+        $levelCount = $levelCount;
+
+        if (count(self::$collection) >= $levelCount) {
+            if (self::$collection[$levelCount] == null) {
+                return $levelCount;
+            } else {
+                return self::arrayHasLevel($levelCount + 1);
+            }
+        }
+
+        return $levelCount;
+    }
+
+    public function first()
+    {
+        return self::$collection[0];
+    }
+
 }

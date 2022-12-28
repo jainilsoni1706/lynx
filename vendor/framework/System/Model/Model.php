@@ -4,6 +4,7 @@ namespace Lynx\System\Model;
 
 use Lynx\System\Exception\ApplicationException;
 use Lynx\System\Database\SQL\DATASET;
+use Lynx\System\Set\Set;
 
 class Model {
  
@@ -40,6 +41,24 @@ class Model {
         $sql = "SELECT * FROM {$model->table} LIMIT 1";
         $result = DATASET::query($sql);
         return $result[0];
+    }
+
+    public static function find()
+    {
+        $model = new static;
+
+        $args = func_get_args();
+
+        if (count($args) == 1) {
+            $sql = "SELECT * FROM {$model->table} WHERE id = '{$args[0]}'";
+        } else if (count($args) == 2) {
+            $sql = "SELECT * FROM {$model->table} WHERE {$args[0]} = '{$args[1]}'";
+        } else {
+            return new ApplicationException("Method find() expects 1 or 2 arguments, " . count($args) . " given");
+        }
+        
+        $result = DATASET::query($sql);
+        return Set::collect($result);
     }
  
 }

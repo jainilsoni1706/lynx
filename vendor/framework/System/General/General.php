@@ -10,12 +10,126 @@ use Lynx\System\File\File;
 
     function dump()
     {
-        $var = func_get_args();
-        echo "<pre style='background-color: #000;color:#00ff00;padding:10px;font-size:15px;'>";
-        print_r($var);
-        echo "</pre>";
-        die();
+            echo '<style>
+                body {
+                    background: darkred;
+                } 
+                .sfdump {
+                    background: #000;
+                    border: 1px solid #ccc;
+                    border-radius: 5px;
+                    box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+                    font-family: Consolas, monospace;
+                    font-size: 14px;
+                    line-height: 1.4;
+                    margin: 20px auto;
+                    max-width: 100%;
+                    overflow: auto;
+                    padding: 10px;
+                    position: relative;
+                    text-align: left;
+                    color: white;
+                    z-index: 9999;
+                }
+                .sfdump .sfdump-header {
+                    background: #dd2d20;
+                    border-bottom: 1px solid #ccc;
+                    border-radius: 5px 5px 0 0;
+                    color: #fff;
+                    font-size: 14px;
+                    font-weight: bold;
+                    padding: 5px 10px;
+                }
+                .sfdump .sfdump-body {
+                    padding: 10px;
+                }
+                .sfdump .sfdump-body .sfdump-array {
+                    margin: 0 0 10px 0;
+                }
+                .sfdump .sfdump-body .sfdump-array .sfdump-array-key {
+                    color: #333;
+                    font-weight: bold;
+                    margin-right: 5px;
+                }
+                .sfdump .sfdump-body .sfdump-array .sfdump-array-value {
+                    color: #333;
+                }
+                .sfdump .sfdump-body .sfdump-array .sfdump-array-value .sfdump-array {
+                    margin: 0;
+                }
+                .sfdump .sfdump-body .sfdump-array .sfdump-array-value .sfdump-array .sfdump-array-key {
+                    color: #333;
+                    font-weight: bold;
+                    margin-right: 5px;
+                }
+                .sfdump .sfdump-body .sfdump-array .sfdump-array-value .sfdump-array .sfdump-array-value {
+                    color: #333;
+                }
+                .sfdump .sfdump-body .sfdump-array .sfdump-array-value .sfdump-array .sfdump-array-value .sfdump-array {
+                    margin: 0;
+                }
+                .sfdump .sfdump-body .sfdump-array .sfdump-array-value .sfdump-array .sfdump-array-value .sfdump-array .sfdump-array-key {
+                    color: #333;
+                    font-weight: bold;
+                    margin-right: 5px;
+                }
+    
+                .sfdump .sfdump-body .sfdump-array .sfdump-array-value .sfdump-array .sfdump-array-value .sfdump-array .sfdump-array-value {
+                    color: #333;
+                }
+    
+    
+                .sfdump .sfdump-body .sfdump-array .sfdump-array-value .sfdump-array .sfdump-array-value .sfdump-array .sfdump-array-value .sfdump-array {
+                    margin: 0;
+                }
+    
+    
+                .sfdump .sfdump-body .sfdump-array .sfdump-array-value .sfdump-array .sfdump-array-value .sfdump-array .sfdump-array-value .sfdump-array .sfdump-array-key {
+                    color: #333;
+                    font-weight: bold;
+                    margin-right: 5px;
+                }
+    
+    
+                .sfdump .sfdump-body .sfdump-array .sfdump-array-value .sfdump-array .sfdump-array-value .sfdump-array .sfdump-array-value .sfdump-array .sfdump-array-value {
+                    color: #333;
+                }
+    
+    
+                .sfdump .sfdump-body .sfdump-array .sfdump-array-value .sfdump-array .sfdump-array-value .sfdump-array .sfdump-array-value .sfdump-array .sfdump-array-value .sfdump-array {
+                    margin: 0;
+                }
+    
+    
+    
+    
+            </style>';
+    
+            echo '<div class="sfdump">';
+            echo '<div class="sfdump-header">Dump</div>';
+            echo '<div class="sfdump-body">';
+            echo '<pre>';
+            print_r(func_get_args());
+            echo '</pre>';
+            echo '</div>';
+            echo '</div>';
+    
+            echo '<script>
+                document.addEventListener("DOMContentLoaded", function(event) {
+                    document.addEventListener("click", function(event) {
+                        if (event.target.classList.contains("sfdump")) {
+                            event.target.style.display = "none";
+                        }
+                    });
+                });
+            </script>';
+    
+    
+            die();
+    
+    
     }
+    
 
 
     function dd()

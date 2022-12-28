@@ -10,6 +10,7 @@ use Lynx\System\Session\Session;
 use Lynx\System\Http\HttpAgent;
 use Lynx\System\Debug\Debugger;
 use Lynx\System\View\View;
+use Lynx\System\File\File;
 use Lynx\System\Set\Set;
 use App\Models\User;
 
@@ -51,8 +52,8 @@ class HomeController extends Controller{
 
     public function model(Request $request)
     {
-        $collection = new Set(User::all());
-        $test = $collection->chunk(3);
-        dd(Set::collect($test)->collapse());
+
+        Debugger::dd(User::find('1')->first());
+
     }
 }
