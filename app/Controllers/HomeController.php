@@ -53,7 +53,5 @@ class HomeController extends Controller{
     public function model(Request $request)
     {
 
-        Debugger::dd(User::find('1')->first());
-
     }
 }

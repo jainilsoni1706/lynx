@@ -13,7 +13,14 @@ class Model {
         $model = new static;
         $sql = "SELECT * FROM {$model->table}";
         $result = DATASET::query($sql);
-        return $result;
+
+        $msc = microtime(true);
+        $result = DATASET::query($sql);
+        $msc = microtime(true)-$msc;
+        $result['model'] = $model;
+        $result['executionTime'] = $msc.'s';
+
+        return Set::collect([$result]);
     }
 
     public function __get($property)
@@ -40,7 +47,14 @@ class Model {
         $model = new static;
         $sql = "SELECT * FROM {$model->table} LIMIT 1";
         $result = DATASET::query($sql);
-        return $result[0];
+
+        $msc = microtime(true);
+        $result = DATASET::query($sql);
+        $msc = microtime(true)-$msc;
+        $result['model'] = $model;
+        $result['executionTime'] = $msc.'s';
+
+        return Set::collect([$result]);
     }
 
     public static function find()
@@ -56,9 +70,14 @@ class Model {
         } else {
             return new ApplicationException("Method find() expects 1 or 2 arguments, " . count($args) . " given");
         }
-        
+
+        $msc = microtime(true);
         $result = DATASET::query($sql);
-        return Set::collect($result);
+        $msc = microtime(true)-$msc;
+        $result['model'] = $model;
+        $result['executionTime'] = $msc.'s';
+
+        return Set::collect([$result]);
     }
  
 }

@@ -1,10 +1,10 @@
 <?php
 
 namespace Lynx\System\Controller;
+use Lynx\System\Session\Session;
 
 session_start();
-
-use Lynx\System\Session\Session;
+error_reporting(~E_NOTICE);
 
 class Controller
 {
