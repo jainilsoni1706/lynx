@@ -312,6 +312,16 @@ class Set {
         return array_values($this->original);
     }
 
+    public function remove($key)
+    {
+        if (array_key_exists($key, $this->original)) {
+            unset($this->original[$key]);
+            return $this;
+        } else {
+            return new ApplicationException("Key {$key} does not exists in set","Lynx/System/Exception/SetException.php");
+        }
+    }
+
     public function count()
     {
         return count($this->original);
@@ -354,9 +364,159 @@ class Set {
         return array_chunk($this->original,$count);
     }    
 
-    
+    public function chunkBy($key,$count = 2000)
+    {
+        $chunks = array();
+        $chunk = array();
+        $i = 0;
+        foreach($this->original as $item) {
+            if ($i == $count) {
+                $chunks[] = $chunk;
+                $chunk = array();
+                $i = 0;
+            }
+            $chunk[] = $item;
+            $i++;
+        }
+        $chunks[] = $chunk;
+        return $chunks;
+    }
 
+    public function chunkByValue($value,$count = 2000)
+    {
+        $chunks = array();
+        $chunk = array();
+        $i = 0;
+        foreach($this->original as $item) {
+            if ($i == $count) {
+                $chunks[] = $chunk;
+                $chunk = array();
+                $i = 0;
+            }
+            $chunk[] = $item;
+            $i++;
+        }
+        $chunks[] = $chunk;
+        return $chunks;
+    }
 
+    public function in($value)
+    {
+        if (in_array($value,$this->original)) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    public function inKey($key)
+    {
+        if (array_key_exists($key,$this->original)) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    public function whereIs($key,$value)
+    {
+        $results = array();
+        if (!is_array($this->original[$key])) {return new ApplicationException("Key does not contain an array.","Lynx/System/Exception/SetException.php");}
+        foreach($this->original[$key] as $item) {
+            if ($item == $value) {
+                $results[] = $item;
+            }
+        }
+        return $results;
+    }
+
+    public function whereIn($key,$values)
+    {
+        $results = array();
+        foreach($this->original as $item) {
+            if (in_array($item[$key],$values)) {
+                $results[] = $item;
+            }
+        }
+        return $results;
+    }
+
+    public function whereNotIn($key,$values)
+    {
+        $results = array();
+        foreach($this->original as $item) {
+            if (!in_array($item[$key],$values)) {
+                $results[] = $item;
+            }
+        }
+        return $results;
+    }
+
+    public function whereBetween($key,$min,$max)
+    {
+        $results = array();
+        foreach($this->original as $item) {
+            if ($item[$key] >= $min && $item[$key] <= $max) {
+                $results[] = $item;
+            }
+        }
+        return $results;
+    }
+
+    public function whereNotBetween($key,$min,$max)
+    {
+        $results = array();
+        foreach($this->original as $item) {
+            if ($item[$key] < $min || $item[$key] > $max) {
+                $results[] = $item;
+            }
+        }
+        return $results;
+    }
+
+    public function whereNull($key)
+    {
+        $results = array();
+        foreach($this->original as $item) {
+            if ($item[$key] === null) {
+                $results[] = $item;
+            }
+        }
+        return $results;
+    }
+
+    public function whereNotNull($key)
+    {
+        $results = array();
+        foreach($this->original as $item) {
+            if ($item[$key] !== null) {
+                $results[] = $item;
+            }
+        }
+        return $results;
+    }
+
+    public function whereEmpty($key)
+    {
+        $results = array();
+        foreach($this->original as $item) {
+            if (empty($item[$key])) {
+                $results[] = $item;
+            }
+        }
+        return $results;
+    }
+
+    public function whereNotEmpty($key)
+    {
+        $results = array();
+        foreach($this->original as $item) {
+            if (!empty($item[$key])) {
+                $results[] = $item;
+            }
+        }
+        return $results;
+    }
 
 
 }

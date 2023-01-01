@@ -52,6 +52,18 @@ class HomeController extends Controller{
 
     public function model(Request $request)
     {
-
+        $object = new \stdClass;
+        $object->username = "jainil";
+        $object->languages  =  ["English" => [4,2,3,1,5], "Hindi" => [1,1,1,1,1], "Gujarati" => [1,1,1,1,1]];
+        $object->programming = ["PHP" => ["array" => ["Laravel", "Lynx", "Codeigniter"], "object" => $object] ];
+        $array = ['test'=> 'value','jainil'=> ['1',2,'2','3'],'type' => ['index' => [7867,0,1,2,234,-1,234234], 'associative' => ['one' => 1, 'tow' => 2, 'three' => 3]],9234,12,345,56,0,0,-1,-2,22234,$object];
+    
+        $array = collect($array);
+        // echo "<pre>";
+        // echo json_encode($array,true);
+        // die;
+        // Debugger::dd($array);
+        // Debugger::dd($array->where('test','value'));
+        Debugger::dd($array->where('username','jainil'));
     }
 }

@@ -233,11 +233,11 @@ use Lynx\System\Set\Set;
 
     function app_path($file = null) {
         if ($file == null) {
-            return dirname(dirname(dirname(dirname(dirname(__FILE__))))) . '\app';
+            $file = root_path() . '/app/';
         } else {
-            $file = str_replace('/', '\\', $file);
-            return dirname(dirname(dirname(dirname(dirname(__FILE__))))) . '\app\\' . $file;
+            $file = root_path() . '/app/' . $file;
         }
+        return str_replace('/', '\\', $file);
     }
 
     function public_path($file = null) {
@@ -245,6 +245,15 @@ use Lynx\System\Set\Set;
             $file = root_path() . '/public/';
         } else {
             $file = root_path() . '/public/' . $file;
+        }
+        return str_replace('/', '\\', $file);
+    }
+
+    function storage_path($file = null) {
+        if ($file == null) {
+            $file = root_path() . '/storage/';
+        } else {
+            $file = root_path() . '/storage/' . $file;
         }
         return str_replace('/', '\\', $file);
     }

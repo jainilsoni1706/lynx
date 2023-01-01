@@ -2,7 +2,6 @@
 
 namespace App\Middleware;
 
-use Lynx\System\Exception\ApplicationException;
 use Lynx\System\Middleware\Middleware;
 use Lynx\System\Request\Request;
 

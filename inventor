@@ -1,0 +1,10 @@
+#!/usr/bin/env php
+<?php
+
+define('LYNX_BEGIN', microtime(true));
+
+require __DIR__.'/vendor/autoload.php';
+
+use Lynx\System\Inventor\Commands\Inventor;
+
+Inventor::make($argv);

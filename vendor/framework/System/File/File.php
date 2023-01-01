@@ -173,4 +173,35 @@ class File {
             }
             return new ApplicationException("File not found: {$path}","Lynx/System/Exception/FileException.php",404);
         }
+
+        public static function write($path, $content)
+        {
+            if (file_exists($path)) {
+                $file = fopen($path, "w");
+                fwrite($file, $content);
+                fclose($file);
+                return true;
+            }
+            return new ApplicationException("File not found: {$path}","Lynx/System/Exception/FileException.php",404);
+        }
+
+        public static function create($path)
+        {
+            if (!file_exists($path)) {
+                return fopen($path, "w");
+            }
+            return new ApplicationException("File already exists: {$path}","Lynx/System/Exception/FileException.php",404);
+        }
+
+        //file create and write 
+        public static function createAndWrite($path, $content)
+        {
+            if (!file_exists($path)) {
+                $file = fopen($path, "w");
+                fwrite($file, $content);
+                fclose($file);
+                return true;
+            }
+            return new ApplicationException("File already exists: {$path}","Lynx/System/Exception/FileException.php",404);
+        }
 }
