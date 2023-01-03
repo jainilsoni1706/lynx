@@ -2,18 +2,24 @@
 
 namespace Lynx\System\Inventor\Commands;
 
+use Lynx\System\Console\Console;
 use Lynx\System\File\File;
+use App\Commands\Handler;
 
-class Inventor {
+class Inventor extends Console  
+{
+
+    public static $commands = [];
 
     public static function make($args)
     {
+        self::registerCommand();
         self::create($args);
     }
 
-    public function create($args)
+    public static function initializeStaticCommands()
     {
-        $commands = [
+        self::$commands[] = [
             'controller' => [
                 'path' => app_path('Controllers/'),
                 'namespace' => 'App\Controllers',
@@ -50,8 +56,8 @@ class Inventor {
                 'path' => app_path('Commands/'),
                 'namespace' => 'App\Commands',
                 'name' => 'make:command',
-                'parentClass' => 'Lynx\System\Command\Command',
-                'content' => "<?php \rnamespace App\Commands; \r\ruse Lynx\System\Command\Command; \r\rclass %s extends Command \r{ \r\tpublic function handle() \r\t{ \r\t} \r} \r",
+                'parentClass' => 'Lynx\System\Console\Console',
+                'content' => "<?php \rnamespace App\Commands; \r\ruse Lynx\System\Console\Console; \r\rclass %s extends Console \r{ \r\tpublic static ".'$command'." = 'add:product';\r\r\tpublic static ".'$name = "add-product";'." \r\r\tpublic static function handle() \r\t{\r \r\t} \r} \r",
                 'type' => 'Command',
             ],
             'schema' => [
@@ -79,6 +85,72 @@ class Inventor {
                 'type' => 'Localization',
             ],
         ];
+    }
+
+    public static function initializeDynamicCommands()
+    {
+        $handler = new Handler();
+
+        foreach($handler->register as $registered) {
+
+            if(class_exists($registered)) {
+                $commands[] = [
+                    (string)$registered::$name => [
+                        'path' => "",
+                        'namespace' => "",
+                        'name' => $registered::$command,
+                        'parentClass' => "",
+                        'content' => "",
+                        'type' => 'CustomCommand',
+                    ]
+                ];
+            } else {
+                echo "\033[31m";
+                echo "Lynx-Inventor Says: Class $registered does not exists.";
+                echo "\033[0m";
+                echo "\n";
+                exit;
+            }
+        }
+    }
+
+    public function registerCommand()
+    {
+        self::initializeStaticCommands();
+        self::initializeDynamicCommands();
+    }
+
+    public function create($args)
+    {
+        $countArguments = count($args);
+
+        if ($countArguments == 2 || $countArguments == 3) {
+            
+            if ($args[0] == "inventor") {
+
+                print_r(self::$commands);
+
+            } else {
+                self::text('Lynx-Inventor: could not open '.$args[0].'.','red');
+            }
+
+        } else {
+            self::text('Lynx-Inventor: Invalid number of arguments in command.','red');
+        }
+    }
+
+
+
+
+
+
+
+
+    public function create1($args)
+    {
+        
+
+        
 
         if (count($args) == 3) {
  
@@ -94,7 +166,9 @@ class Inventor {
 
                 if ($alias === 'inventor') {
 
-                    foreach ($commands as $value)
+                    self::registerCommand();
+
+                    foreach (self::$commands as $value)
                     {
                         if ($command === $value['name']) {
                             $path = $value['path'];
@@ -170,8 +244,52 @@ class Inventor {
             echo "\n";
             exit;
         }
+       
+
+    }
+
+    public static function registerCommand1()
+    {
+        $handler = new Handler();
         
+        foreach($handler->register as $registered) {
+            if(class_exists($registered)) {
+                $commands[] = array(
+                    'class' => $registered,
+                    'name' => $registered::$name,
+                    'command' => $registered::$command,
+                    'custom' => true
+                );
+            } else {
+                echo "\033[31m";
+                echo "Lynx-Inventor Says: Class $registered does not exists.";
+                echo "\033[0m";
+                echo "\n";
+                exit;
+            }
+        }
+    }
 
+    public function commands()
+    {
+         $middlewaresList = new Handler();
 
+        if(!in_array($middleware, $middlewaresList->register)){
+            return new ApplicationException("Class $middleware not found.", "Lynx/System/Exception/ApplicationException.php");
+        }
+
+        try {
+            $middleware = new $middleware;
+        } catch (\Throwable $th) {
+            return new ApplicationException($th->getMessage(), "Lynx/System/Exception/ApplicationException.php");
+        }
+
+        try {
+            if($middleware->handle(new Request, $condition)){
+                $callback();
+            }
+        } catch (\Throwable $th) {
+            return new ApplicationException($th->getMessage(), "Lynx/System/Exception/ApplicationException.php");
+        }
     }
 }

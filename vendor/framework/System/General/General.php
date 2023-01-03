@@ -335,7 +335,11 @@ use Lynx\System\Set\Set;
         return new Set($array);
     }
     
-
+    function out($array = [])
+    {
+        print_r($array);
+        exit;
+    }
 
 
 
