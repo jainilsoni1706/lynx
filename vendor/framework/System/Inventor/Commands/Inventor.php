@@ -27,6 +27,7 @@ class Inventor extends Console
                 'parentClass' => 'App\Controllers\Controller',
                 'content' => "<?php \r namespace App\Controllers; \r\r use App\Controllers\Controller; \r\r class %s extends Controller { \r \r } \r",
                 'type' => 'Controller',
+                'class' => ''
             ],
             'model' => [
                 'path' => app_path('Models/'),
@@ -35,6 +36,7 @@ class Inventor extends Console
                 'parentClass' => 'Lynx\System\Model\Model',
                 'content' => "<?php \r namespace App\Models; \r\r use Lynx\System\Model\Model; \r\r class %s extends Model { \r \r } \r",
                 'type' => 'Model',
+                'class' => ''
             ],
             'middleware' => [
                 'path' => app_path('Middleware/'),
@@ -43,6 +45,7 @@ class Inventor extends Console
                 'parentClass' => 'Lynx\System\Middleware\Middleware',
                 'content' => "<?php \r\r namespace App\Middleware; \r\r use Lynx\System\Middleware\Middleware; \r use Lynx\System\Request\Request; \r\r class %s extends Middleware { \r\r\tpublic function handle(Request ".'$request, $args'.") : bool \r\t{ \r \t\treturn true; \r\t}  \r\r } ",
                 'type' => 'Middleware',
+                'class' => ''
             ],
             'view' => [
                 'path' => app_path('Views/'),
@@ -51,6 +54,7 @@ class Inventor extends Console
                 'parentClass' => '',
                 'content' => '',
                 'type' => 'View',
+                'class' => ''
             ],
             'command' => [
                 'path' => app_path('Commands/'),
@@ -59,6 +63,7 @@ class Inventor extends Console
                 'parentClass' => 'Lynx\System\Console\Console',
                 'content' => "<?php \rnamespace App\Commands; \r\ruse Lynx\System\Console\Console; \r\rclass %s extends Console \r{ \r\tpublic static ".'$command'." = 'add:product';\r\r\tpublic static ".'$name = "add-product";'." \r\r\tpublic static function handle() \r\t{\r \r\t} \r} \r",
                 'type' => 'Command',
+                'class' => ''
             ],
             'schema' => [
                 'path' => app_path('Schemas/'),
@@ -67,6 +72,7 @@ class Inventor extends Console
                 'parentClass' => 'Lynx\System\Schema\Schema',
                 'content' => '<?php \r namespace App\Schemas; \r use Lynx\System\Schema\Schema; \r class %s extends Schema { \r public function handle() { \r } \r } \r',
                 'type' => 'Schema',
+                'class' => ''
             ],
             'seeder' => [
                 'path' => app_path('Seeders/'),
@@ -75,6 +81,7 @@ class Inventor extends Console
                 'parentClass' => 'Lynx\System\Seeder\Seeder',
                 'content' => '<?php \r namespace App\Seeders; \r use Lynx\System\Seeder\Seeder; \r class %s extends Seeder { \r public function handle() { \r } \r } \r',
                 'type' => 'Seeder',
+                'class' => ''
             ],
             'localization' => [
                 'path' => app_path('Localization/'),
@@ -83,6 +90,7 @@ class Inventor extends Console
                 'parentClass' => '',
                 'content' => "{\r}",
                 'type' => 'Localization',
+                'class' => ''
             ],
         ];
     }
@@ -94,14 +102,15 @@ class Inventor extends Console
         foreach($handler->register as $registered) {
 
             if(class_exists($registered)) {
-                $commands[] = [
-                    (string)$registered::$name => [
+                self::$commands[] = [
+                    $registered::$name => [
                         'path' => "",
                         'namespace' => "",
                         'name' => $registered::$command,
                         'parentClass' => "",
                         'content' => "",
                         'type' => 'CustomCommand',
+                        'class' => $registered
                     ]
                 ];
             } else {
@@ -118,6 +127,7 @@ class Inventor extends Console
     {
         self::initializeStaticCommands();
         self::initializeDynamicCommands();
+        self::$commands = array_merge(self::$commands[0],self::$commands[1]);
     }
 
     public function create($args)
@@ -128,7 +138,46 @@ class Inventor extends Console
             
             if ($args[0] == "inventor") {
 
-                print_r(self::$commands);
+                if ($countArguments == 2) {
+                    if (array_key_exists($args[1],self::$commands)) {
+                        if (self::$commands[$args[1]]['type'] == "CustomCommand") {
+
+                            self::$commands[$args[1]]['class']::handle();
+                        }
+                    }
+                } else {
+                    $filename = ucfirst($args[2]);
+
+                    foreach (self::$commands as $value)
+                    {
+                        if ($args[1] === $value['name']) {
+                            $path = $value['path'];
+                            $content = sprintf($value['content'],$filename);
+                            $type = $value['type'];
+                        }
+                    }
+
+                    if ($type === 'View') {
+                        $filename = strtolower($filename) . ".lynx.php";
+                    } else if($type === 'Localization') {
+                        $filename = strtolower($filename) . ".json";
+                    } else {
+                        $filename = $filename . ".php";
+                    }
+
+                    if (File::exists($path.$filename)) {
+                        echo "\033[31m";
+                        echo "Lynx-Inventor Says: File already exists: ".$path.$filename.".php.";
+                        echo "\033[0m";
+                        echo "\n";
+                        exit;
+                    } else {
+                        File::createAndWrite($path.$filename,$content);
+                        echo "\033[32m";
+                        echo $type." created successfully.";
+                        echo "\033[0m";
+                    }
+                }
 
             } else {
                 self::text('Lynx-Inventor: could not open '.$args[0].'.','red');
@@ -143,153 +192,4 @@ class Inventor extends Console
 
 
 
-
-
-
-    public function create1($args)
-    {
-        
-
-        
-
-        if (count($args) == 3) {
- 
-            try {
-                $alias = $args[0];
-                $command = $args[1];
-                $filename = ucfirst($args[2]);      
-                $path = null;
-                $namespace = null;
-                $name = null;
-                $content = null;
-                $fileType = null;
-
-                if ($alias === 'inventor') {
-
-                    self::registerCommand();
-
-                    foreach (self::$commands as $value)
-                    {
-                        if ($command === $value['name']) {
-                            $path = $value['path'];
-                            $namespace = $value['namespace'];
-                            $name = $value['name'];
-                            $content = sprintf($value['content'],$filename);
-                            $fileType = $value['type'];
-                        }
-                    }
-
-                    if ($path !== null && $namespace !== null && $name !== null && $content !== null && $fileType !== null) {
-
-                        if ($fileType === 'View') {
-                            $filename = strtolower($filename) . ".lynx.php";
-                        } else if($fileType === 'Localization') {
-                            $filename = strtolower($filename) . ".json";
-                        } else {
-                            $filename = $filename . ".php";
-                        }
-
-                        if (File::exists($path.$filename)) {
-                            echo "\033[31m";
-                            echo "Lynx-Inventor Says: File already exists: ".$path.$filename.".php.";
-                            echo "\033[0m";
-                            echo "\n";
-                            exit;
-                        } else {
-                            File::createAndWrite($path.$filename,$content);
-                            echo "\033[32m";
-                            echo "$fileType created successfully.";
-                            echo "\033[0m";
-                        }
-
-                    } else {
-                        echo "\033[31m";
-                        echo "Lynx-Inventor Says: Command you've entered is not valid.";
-                        echo "\033[0m";
-                        echo "\n";
-                        echo "\033[33m";
-                        echo "Lynx-Inventor Says: Did you mean one of these?";
-                        echo "\033[0m";
-                        echo "\n";
-                        foreach ($commands as $key => $value) {
-                                echo "\033[32m";
-                                echo $value['name'];
-                                echo "\033[0m";
-                                echo "\n";
-                        }
-                        exit;
-                    }
-                  
-
-                } else {
-                    echo "\033[31m";
-                    echo "Lynx-Inventor Says: Could not open input file: ".$args[0].".";
-                    echo "\033[0m";
-                    echo "\n";
-                    exit;
-                }
-
-            }   catch (\Exception $e) {
-                echo "\033[31m";
-                echo "Lynx-Inventor Says: Command you've entered is not valid.";
-                echo "\033[0m";
-                echo "\n";
-                exit;
-            }
- 
-        } else {
-            echo "\033[31m";
-            echo "Lynx-Inventor Says: Command you've entered is not valid.";
-            echo "\033[0m";
-            echo "\n";
-            exit;
-        }
-       
-
-    }
-
-    public static function registerCommand1()
-    {
-        $handler = new Handler();
-        
-        foreach($handler->register as $registered) {
-            if(class_exists($registered)) {
-                $commands[] = array(
-                    'class' => $registered,
-                    'name' => $registered::$name,
-                    'command' => $registered::$command,
-                    'custom' => true
-                );
-            } else {
-                echo "\033[31m";
-                echo "Lynx-Inventor Says: Class $registered does not exists.";
-                echo "\033[0m";
-                echo "\n";
-                exit;
-            }
-        }
-    }
-
-    public function commands()
-    {
-         $middlewaresList = new Handler();
-
-        if(!in_array($middleware, $middlewaresList->register)){
-            return new ApplicationException("Class $middleware not found.", "Lynx/System/Exception/ApplicationException.php");
-        }
-
-        try {
-            $middleware = new $middleware;
-        } catch (\Throwable $th) {
-            return new ApplicationException($th->getMessage(), "Lynx/System/Exception/ApplicationException.php");
-        }
-
-        try {
-            if($middleware->handle(new Request, $condition)){
-                $callback();
-            }
-        } catch (\Throwable $th) {
-            return new ApplicationException($th->getMessage(), "Lynx/System/Exception/ApplicationException.php");
-        }
-    }
 }

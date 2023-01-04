@@ -3,15 +3,15 @@ namespace App\Commands;
 
 use Lynx\System\Console\Console; 
 
-class Spammer extends Console 
+class Tester extends Console 
 { 
-	public static $command = 'start:spamming';
+	public static $command = 'add:product';
 
 	public static $name = "add-product"; 
 
 	public static function handle() 
 	{
-		for($i = 1; $i <=10;  $i++) {
+		for($i = 10; $i >=1;  $i--) {
 			echo $i;
 		}		
 	} 

@@ -3,6 +3,7 @@
 namespace App\Commands;
 
 use App\Commands\Spammer;
+use App\Commands\Tester;
 
 class Handler {
 
@@ -11,6 +12,7 @@ class Handler {
     public function __construct()
     {
         $this->register = [
+            Tester::class,
             Spammer::class
         ];        
     }
