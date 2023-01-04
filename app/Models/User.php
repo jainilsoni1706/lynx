@@ -6,7 +6,7 @@ use Lynx\System\Model\Model;
 
 class User extends Model {
     
-    public $table = "user";    
+    public static $table = "user";    
         
 }
 

@@ -518,5 +518,12 @@ class Set {
         return $results;
     }
 
+    public function setEloquent($model, $executionTime)
+    {
+        $this->eloquent = $model;
+        $this->executionTime = $executionTime;
+        return $this;
+    }
+
 
 }

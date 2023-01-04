@@ -58,7 +58,10 @@ class HomeController extends Controller{
         $object->programming = ["PHP" => ["array" => ["Laravel", "Lynx", "Codeigniter"], "object" => $object] ];
         $array = ['test'=> 'value','jainil'=> ['1',2,'2','3'],'type' => ['index' => [7867,0,1,2,234,-1,234234], 'associative' => ['one' => 1, 'tow' => 2, 'three' => 3]],9234,12,345,56,0,0,-1,-2,22234,$object];
     
-        $array = collect($array);
-        Debugger::dd($array);
+        // $array = collect($array);
+        // Debugger::dd($array);
+
+        // dd(collect($array));
+        dd(User::select('*')->whereBetween('id',[34,38])->orderBy('id','ASC')->limit(5)->get());
     }
 }
