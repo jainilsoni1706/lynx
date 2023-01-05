@@ -3,33 +3,36 @@
 namespace Lynx\System\Model;
 
 use Lynx\System\Exception\ApplicationException;
+use Lynx\System\Database\Connection\Connect;
 use Lynx\System\Database\SQL\DATASET;
 
 class Model {
 
     protected static $table;
-    protected static $select;
+    protected static $select = "*";
     protected static $where;
     protected static $query;
 
     public static function all()
     {
-        $model = new static;
-        $table = $model::$table;
+        $table = self::setTable(new static);
         $query = "SELECT * FROM $table";
 
         $msc = microtime(true);
         $result = DATASET::query($query);
         $msc = microtime(true)-$msc;
 
-        return collect([$result]);
+        return collect([$result])->setEloquent($table, new static, $msc);
     }
 
     public static function select()
     {
-        $args = func_get_args();
-        $args = implode(',', $args);
-        self::$select = $args;
+        if (func_num_args() == 0) {
+            self::$select = "*";
+        } else {
+            $args = func_get_args();
+            self::$select = implode(',', $args);
+        }
 
         return new static;
     }
@@ -87,8 +90,7 @@ class Model {
 
     public static function get()
     {
-        $model = new static;
-        $table = $model::$table;
+        $table = self::setTable(new static);
         $query = "SELECT ".self::$select." FROM $table ".self::$where;
 
         $msc = microtime(true);
@@ -96,7 +98,7 @@ class Model {
         $msc = microtime(true)-$msc;
         self::$query = $query;
 
-        return collect([$result]);
+        return collect($result)->setEloquent($table, new static, $msc);
     }
 
     public static function whereIn($column, $values = [])
@@ -126,6 +128,24 @@ class Model {
     public static function toSql()
     {
         return self::$query;
+    }
+
+    public static function setTable($temp)
+    {
+        $temp = $temp;
+        $class = get_class($temp);
+        $class = explode('\\',$class);
+        $class = strtolower(end($class));
+
+        if (Connect::tableExists($class)) {
+            return $class;
+        } else {
+            if (Connect::tableExists($temp::$table)) {
+                return $temp::$table;
+            } else {
+                return new ApplicationException("Table $class does not exist", "Lynx/Framework/System/Exception/DatabaseException.php", 500);   
+            }
+        }
     }
  
 }

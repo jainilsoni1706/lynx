@@ -82,4 +82,13 @@ class Connect {
         self::$instance = null;
     }
 
+    public static function tableExists($table) {
+        try {
+            $result = self::query("SELECT 1 FROM $table LIMIT 1");
+        } catch (\Exception $e) {
+            return false;
+        }
+        return true;
+    }
+
 }

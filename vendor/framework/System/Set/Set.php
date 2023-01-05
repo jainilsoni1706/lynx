@@ -518,12 +518,19 @@ class Set {
         return $results;
     }
 
-    public function setEloquent($model, $executionTime)
+    public function setEloquent($table, $model, $executionTime)
     {
+        $this->table = $table;
         $this->eloquent = $model;
         $this->executionTime = $executionTime;
         return $this;
     }
+
+    public function first()
+    {
+        return $this->original[0];
+    }
+    
 
 
 }

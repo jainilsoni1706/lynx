@@ -33,13 +33,18 @@ class ComposerStaticInit98b2ef19afb75cc0917be9f0cf7a94db
     );
 
     public static $classMap = array (
+        'App\\Commands\\Handler' => __DIR__ . '/../..' . '/app/Commands/Handler.php',
+        'App\\Commands\\Spammer' => __DIR__ . '/../..' . '/app/Commands/Spammer.php',
+        'App\\Commands\\Tester' => __DIR__ . '/../..' . '/app/Commands/Tester.php',
         'App\\Controllers\\Controller' => __DIR__ . '/../..' . '/app/Controllers/Controller.php',
         'App\\Controllers\\HomeController' => __DIR__ . '/../..' . '/app/Controllers/HomeController.php',
+        'App\\Controllers\\TestController' => __DIR__ . '/../..' . '/app/Controllers/TestController.php',
         'App\\Middleware\\Authenticable' => __DIR__ . '/../..' . '/app/Middleware/Authenticable.php',
         'App\\Middleware\\Handler' => __DIR__ . '/../..' . '/app/Middleware/Handler.php',
         'App\\Models\\User' => __DIR__ . '/../..' . '/app/Models/User.php',
         'Composer\\InstalledVersions' => __DIR__ . '/..' . '/composer/InstalledVersions.php',
         'Lynx\\System\\Cache\\Cache' => __DIR__ . '/..' . '/framework/System/Cache/Cache.php',
+        'Lynx\\System\\Console\\Console' => __DIR__ . '/..' . '/framework/System/Console/Console.php',
         'Lynx\\System\\Controller\\Controller' => __DIR__ . '/..' . '/framework/System/Controller/Controller.php',
         'Lynx\\System\\Database\\Connection\\Connect' => __DIR__ . '/..' . '/framework/System/Database/Connection/Connect.php',
         'Lynx\\System\\Database\\SQL\\DATASET' => __DIR__ . '/..' . '/framework/System/Database/SQL/DATASET.php',
@@ -47,6 +52,7 @@ class ComposerStaticInit98b2ef19afb75cc0917be9f0cf7a94db
         'Lynx\\System\\Exception\\ApplicationException' => __DIR__ . '/..' . '/framework/System/Exception/ApplicationException.php',
         'Lynx\\System\\File\\File' => __DIR__ . '/..' . '/framework/System/File/File.php',
         'Lynx\\System\\Http\\HttpAgent' => __DIR__ . '/..' . '/framework/System/Http/HttpAgent.php',
+        'Lynx\\System\\Inventor\\Commands\\Inventor' => __DIR__ . '/..' . '/framework/System/Inventor/Commands/Inventor.php',
         'Lynx\\System\\Localization\\Lang' => __DIR__ . '/..' . '/framework/System/Localization/Lang.php',
         'Lynx\\System\\Mail\\Mail' => __DIR__ . '/..' . '/framework/System/Mail/Mail.php',
         'Lynx\\System\\Middleware\\Middleware' => __DIR__ . '/..' . '/framework/System/Middleware/Middleware.php',
