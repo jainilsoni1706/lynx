@@ -242,7 +242,6 @@ class DATASET {
         }
     }
 
-    // query static method
     public static function query($sql)
     {
         $query = Connect::query($sql);
@@ -251,6 +250,12 @@ class DATASET {
         }else{
             return 0;
         }
+    }
+
+    // multi query
+    public static function multiQuery($sql)
+    {
+        $query = Connect::multiQuery($sql);
     }
 
 }

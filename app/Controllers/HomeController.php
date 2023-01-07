@@ -52,6 +52,6 @@ class HomeController extends Controller{
 
     public function model(Request $request)
     {
-        dd(User::select("id",'username')->limit(3)->get());
+
     }
 }

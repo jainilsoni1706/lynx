@@ -56,13 +56,13 @@ class Model {
                 $operator = "=";
                 $value = $args[1];
             }
-
+            
             if (isset(self::$where)) {
-                self::$where .= " AND $column $operator $value";
+                self::$where .= " AND $column $operator '$value'";
             } else {
-                self::$where = "WHERE $column $operator $value";
+                self::$where = "WHERE $column $operator '$value'";
             }
-
+            
             return new static;
 
         } catch (ApplicationException $e) {
@@ -97,14 +97,18 @@ class Model {
         $result = DATASET::query($query);
         $msc = microtime(true)-$msc;
         self::$query = $query;
-
+        
         return collect($result)->setEloquent($table, new static, $msc);
     }
 
     public static function whereIn($column, $values = [])
     {
-        $values = implode(',', $values);
+        $values = array_map(function($value) {
+            return "'$value'";
+        }, $values);
 
+        $values = implode(',', $values);
+        
         if (isset(self::$where)) {
             self::$where .= " AND $column IN ($values)";
         } else {
@@ -117,19 +121,14 @@ class Model {
     public static function whereBetween($column, $values = [])
     {
         if (isset(self::$where)) {
-            self::$where .= " AND $column BETWEEN " . $values[0] . " AND " . $values[1];
+            self::$where .= " AND $column BETWEEN '" . $values[0] . "' AND '" . $values[1]."'";
         } else {
-            self::$where = "WHERE $column BETWEEN " . $values[0] . " AND " . $values[1];
+            self::$where = "WHERE $column BETWEEN '" . $values[0] . "' AND '" . $values[1]."'";
         }
 
         return new static;
     }
     
-    public static function toSql()
-    {
-        return self::$query;
-    }
-
     public static function setTable($temp)
     {
         $temp = $temp;
@@ -147,5 +146,50 @@ class Model {
             }
         }
     }
+
+    public static function create($data = [])
+    {
+        $table = self::setTable(new static);
+
+        if (is_array($data)) {
+            if (isset($data[0])) {
+                $columns = array_keys($data[0]);
+                $columns = implode(',', $columns);
+                $values = [];
+                foreach ($data as $key => $value) {
+                    $values[] = "('" . implode("','", $value) . "')";
+                }
+                $values = implode(',', $values);
+            } else {
+                $columns = array_keys($data);
+                $columns = implode(',', $columns);
+                $values = "('" . implode("','", $data) . "')";
+            }
+
+            $query = "INSERT INTO $table ($columns) VALUES $values";
+
+            $msc = microtime(true);
+            $result = DATASET::multiQuery($query);
+            $msc = microtime(true)-$msc;
+    
+            return array("table" => $table, "Eloquent" => new static, "executionTime" =>$msc);
+
+        } else {
+            return new ApplicationException("Invalid arguments passed.", "Lynx/Framework/System/Exception/DatabaseException.php", 500);   
+        }
+    }
+
+    public static function delete()
+    {
+        $table = self::setTable(new static);
+        $query = "DELETE FROM $table ".self::$where;
+
+        $msc = microtime(true);
+        $result = DATASET::query($query);
+        $msc = microtime(true)-$msc;
+
+        return array("table" => $table, "Eloquent" => new static, "executionTime" =>$msc);
+    }
+    
  
 }

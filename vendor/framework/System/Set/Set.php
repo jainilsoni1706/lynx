@@ -30,7 +30,9 @@ class Set {
             $this->arrayType = $this->arrayType();
         }else if(is_object($set) && !empty($set)){
             $this->setType = 'object';
-        }else{
+        }else if(is_int($set)){
+            $this->setType = 'int';
+        } else{
             return new ApplicationException("Set is empty or not valid","Lynx/System/Exception/SetException.php");
         }
     }
@@ -531,6 +533,9 @@ class Set {
         return $this->original[0];
     }
     
-
+    public function dd()
+    {
+        dd($this->original);
+    }
 
 }

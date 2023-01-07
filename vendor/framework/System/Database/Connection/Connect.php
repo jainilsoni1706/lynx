@@ -81,6 +81,13 @@ class Connect {
     public static function close() {
         self::$instance = null;
     }
+    
+    public static function multiQuery($sql) {
+        $pdo = self::connect();
+        $pdo->setAttribute(\PDO::MYSQL_ATTR_USE_BUFFERED_QUERY, false);
+        $pdo->exec($sql);
+        $pdo->setAttribute(\PDO::MYSQL_ATTR_USE_BUFFERED_QUERY, true);
+    }
 
     public static function tableExists($table) {
         try {
