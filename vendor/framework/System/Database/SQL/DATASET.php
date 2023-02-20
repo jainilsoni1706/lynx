@@ -252,10 +252,26 @@ class DATASET {
         }
     }
 
-    // multi query
     public static function multiQuery($sql)
     {
         $query = Connect::multiQuery($sql);
     }
+
+    public static function beginTransaction()
+    {
+        Connect::beginTransaction();
+    }
+
+    public static function commit()
+    {
+        Connect::commit();
+    }
+
+    public static function rollBack()
+    {
+        Connect::rollBack();
+    }
+
+    
 
 }

@@ -12,6 +12,7 @@ use Lynx\System\Debug\Debugger;
 use Lynx\System\View\View;
 use Lynx\System\File\File;
 use Lynx\System\Set\Set;
+use Lynx\System\Phtml\Phtml;
 use App\Models\User;
 
 class HomeController extends Controller{
@@ -31,8 +32,9 @@ class HomeController extends Controller{
         return View::render('home', compact('moduleName', 'date'));
     }
 
-    public function create()
+    public function create(Request $request)
     {
+        dd($request->all());
         $moduleName = $this->moduleName . " - Insert";
         $date = date('Y-m-d H:i:s');
 
@@ -51,7 +53,7 @@ class HomeController extends Controller{
     }
 
     public function model(Request $request)
-    {
-
+    {        
+        dd($request->all());
     }
 }

@@ -1,0 +1,5 @@
+405 = Method Not allowed
+404 = Not found
+419 = csrf missing
+420 = csrf mismatched
+402 = invalid argument passed

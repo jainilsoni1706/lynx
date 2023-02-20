@@ -6,7 +6,7 @@ class FormProtection {
 
     public static function generateToken()
     {
-        $token = md5(uniqid(rand(), true));
+        $token = bin2hex(random_bytes(32));
         $_SESSION['token'] = $token;
         return $token;
     }

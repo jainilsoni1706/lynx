@@ -54,14 +54,17 @@ class ComposerStaticInit98b2ef19afb75cc0917be9f0cf7a94db
         'Lynx\\System\\Http\\HttpAgent' => __DIR__ . '/..' . '/framework/System/Http/HttpAgent.php',
         'Lynx\\System\\Inventor\\Commands\\Inventor' => __DIR__ . '/..' . '/framework/System/Inventor/Commands/Inventor.php',
         'Lynx\\System\\Localization\\Lang' => __DIR__ . '/..' . '/framework/System/Localization/Lang.php',
+        'Lynx\\System\\Log\\Log' => __DIR__ . '/..' . '/framework/System/Log/Log.php',
         'Lynx\\System\\Mail\\Mail' => __DIR__ . '/..' . '/framework/System/Mail/Mail.php',
         'Lynx\\System\\Middleware\\Middleware' => __DIR__ . '/..' . '/framework/System/Middleware/Middleware.php',
         'Lynx\\System\\Model\\Model' => __DIR__ . '/..' . '/framework/System/Model/Model.php',
+        'Lynx\\System\\Phtml\\Phtml' => __DIR__ . '/..' . '/framework/System/Phtml/Phtml.php',
         'Lynx\\System\\Request\\Request' => __DIR__ . '/..' . '/framework/System/Request/Request.php',
         'Lynx\\System\\Routes\\Route' => __DIR__ . '/..' . '/framework/System/Routes/Route.php',
         'Lynx\\System\\Security\\FormProtection' => __DIR__ . '/..' . '/framework/System/Security/FormProtection.php',
         'Lynx\\System\\Session\\Session' => __DIR__ . '/..' . '/framework/System/Session/Session.php',
         'Lynx\\System\\Set\\Set' => __DIR__ . '/..' . '/framework/System/Set/Set.php',
+        'Lynx\\System\\Streeng\\Streeng' => __DIR__ . '/..' . '/framework/System/Streeng/Streeng.php',
         'Lynx\\System\\View\\View' => __DIR__ . '/..' . '/framework/System/View/View.php',
     );
 

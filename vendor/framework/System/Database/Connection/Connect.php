@@ -50,6 +50,10 @@ class Connect {
         return self::$instance;
     }
 
+    public static function getInstance() {
+        return self::$instance;
+    }
+
     public static function prepare($sql) {
         return self::connect()->prepare($sql);
     }

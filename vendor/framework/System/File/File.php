@@ -174,11 +174,17 @@ class File {
             return new ApplicationException("File not found: {$path}","Lynx/System/Exception/FileException.php",404);
         }
 
-        public static function write($path, $content)
+        public static function write($path, $content, $keepContent = true)
         {
             if (file_exists($path)) {
+
+                $oldContent = "";
+                if ($keepContent) {
+                    $oldContent = self::read($path);
+                }
+
                 $file = fopen($path, "w");
-                fwrite($file, $content);
+                fwrite($file, $oldContent.$content);
                 fclose($file);
                 return true;
             }
