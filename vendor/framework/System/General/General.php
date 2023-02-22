@@ -13,7 +13,7 @@ use Lynx\System\Set\Set;
     {
             echo '<style>
                 body {
-                    background: darkred;
+                    background: darkblue;
                 } 
                 .sfdump {
                     background: #000;
@@ -29,14 +29,14 @@ use Lynx\System\Set\Set;
                     padding: 10px;
                     position: relative;
                     text-align: left;
-                    color: white;
+                    color: #7CFC00!important;
                     z-index: 9999;
                 }
                 .sfdump .sfdump-header {
-                    background: #dd2d20;
+                    background: #000;
                     border-bottom: 1px solid #ccc;
                     border-radius: 5px 5px 0 0;
-                    color: #fff;
+                    color: #FF5F1F!important;
                     font-size: 14px;
                     font-weight: bold;
                     padding: 5px 10px;

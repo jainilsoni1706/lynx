@@ -3,3 +3,11 @@
 419 = csrf missing
 420 = csrf mismatched
 402 = invalid argument passed
+
+
+
+
+701 = method not supported // Http Exception
+788 = invalid value passed to argument passed //Argument Exception
+789 = invalid number of args //SyntaxException
+707 = not found //AccessException

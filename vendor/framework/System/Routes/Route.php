@@ -3,76 +3,131 @@
 namespace Lynx\System\Routes;
 
 use Lynx\System\Exception\ApplicationException;
+use Lynx\System\Exception\LynxException;
 use Lynx\System\Request\Request;
 use App\Middleware\Handler;
 
 class Route{
 
-    public static function get($route, $array)
-    {
-        self::registerRoute($route, $array, "GET");
+    protected static $routes = [];
+
+    public static function get($uri, $action) {
+        self::$routes[] = ['method' => 'GET', 'uri' => $uri, 'action' => $action];
+
+        return new static();
     }
 
-    public static function post($route, $array)
-    {
-        self::registerRoute($route, $array, "POST");
+    public static function post($uri, $action) {
+        self::$routes[] = ['method' => 'POST', 'uri' => $uri, 'action' => $action];
+
+        return new static();
     }
 
-    public static function registerRoute($route, $array, $method)
-    {
-        if (!is_string($route)) {
-            return new ApplicationException("First parameter must be string.", "routes/routes.php", 402);
+    public function name($name = null) {
+        if (is_null($name) && !is_string($name)) {
+            throw new LynxException("LYNX788: Expected string passed ".gettype($name).".",'Lynx/Component/SyntaxException', 788);
         }
 
-        if (!is_array($array) || count($array) !== 2) {
-            return new ApplicationException("Second parameter must be an array with two values.", "routes/routes.php", 402);
+        $count = count(self::$routes);
+        self::$routes[$count-1]['name'] = $name;
+    }
+
+    public static function dispatch($callback) {
+        if (!is_callable($callback)) {
+            throw new LynxException("LYNX788: Expected callback passed ".gettype($callback).".",'Lynx/Component/SyntaxException', 788);
         }
-        $controller = $array[0];
-        $action = $array[1];
-    
-        if (!class_exists($controller)) {
-            return new ApplicationException("Class App/Controllers/$controller::class not found.", "routes/routes.php", 404);
-        }
-    
-        if (!method_exists($controller, $action)) {
-            return new ApplicationException("Method App/Controllers/$controller::$action Method not found.", "routes/routes.php", 404);
-        }
-    
-        $requestURI = $_SERVER['REQUEST_URI'];
-        $requestMethod = $_SERVER['REQUEST_METHOD'];
-    
-        if ($requestMethod !== $method) {
-            return new ApplicationException("Method not allowed.", "routes/routes.php",407);
-        }
-    
-        if ($method === "POST" && (!isset($_POST['_token']) || $_POST['_token'] !== $_SESSION['_token'])) {
-            if (!isset($_POST['_token'])) {
-                return new ApplicationException("CSRF token not found.", "routes/routes.php", 419);
-            } else {
-                return new ApplicationException("CSRF token mismatched.", "routes/routes.php", 420);
+
+        $callback();
+
+        return new static();
+    }
+
+    public function use() {
+        self::execute();
+    }
+
+    public static function execute() {
+
+        $currentRoute = $_SERVER['REQUEST_URI'];
+
+        foreach (self::$routes as $route) {
+
+            if ($_SERVER["REQUEST_METHOD"] !== $route['method']) {
+                throw new LynxException("LYNX701: ".$route['method']." Method is not supported for this request.",'Lynx/Component/HttpException', 701);
             }
-        }
     
-        $escapedRoute = preg_quote($route, '/');
-        
-        $paramPattern = '/\{([^}]*)\}/';
-        $paramReplacement = '(?P<$1>[^/]+)';
-        $regexRoute = preg_replace($paramPattern, $paramReplacement, $escapedRoute);
+            if (!is_string($route['uri'])) {
+                throw new LynxException("LYNX788: Expected string passed ".gettype($route['uri']).".",'Lynx/Component/SyntaxException', 788);
+            }
     
-        $regexRoute = '/^' . $regexRoute . '$/';
+            if (!is_array($route['action'])) {
+                throw new LynxException("LYNX788: Expected array passed ".gettype($route['action']).".",'Lynx/Component/ArgumentException', 788);
+            }
     
-        $match = [];
-        if (preg_match($regexRoute, $requestURI, $match) !== 1) {
-            return null;
-        }
+            if (count($route['action']) !== 2) {
+                throw new LynxException("LYNX789: Expected 2 arguments passed ".count($route['action']).".",'Lynx/Component/SyntaxException', 789);
+            }
     
-        $params = array_filter($match, 'is_string', ARRAY_FILTER_USE_KEY);
+            if (!class_exists($route['action'][0])) {
+                throw new LynxException("LYNX707: Class ".($route['action'][0])." not found.",'Lynx/Component/AccessException', 707);
+            }
+    
+            if (!method_exists($route['action'][0], $route['action'][1])) {
+                throw new LynxException("LYNX707: Method ".($route['action'][1].'::'.$route['action'][1])." not found.",'Lynx/Component/AccessException', 707);
+            }
 
-        $app = new $controller;
-        $app->$action(new Request($params));
+            $directoryName = explode('\\', __DIR__);
 
-        return;
+            foreach ($directoryName as &$element) {
+                if (strpos($element, ":") !== false) {
+                    $element = null;
+                }
+            }
+            // work in progress
+            $directoryName = implode('/', array_filter($directoryName));
+
+            $explodeCurrentRoute = array_filter(explode('/', $currentRoute));
+            unset($explodeCurrentRoute[1]);
+
+            $explodeRoute = array_filter(explode('/', $route['uri']));
+
+            foreach ($explodeRoute as &$element) {
+                $element = str_replace(array('{', '}'), '', $element);
+            }
+
+            dd($directoryName);
+            dd($explodeCurrentRoute, $explodeRoute);
+
+            if (count($explodeCurrentRoute) == count($explodeRoute)) {
+
+            }
+
+        }
+
+        throw new LynxException("LYNX707: Request ".($currentRoute)." not found.",'Lynx/Component/HttpException', 707);
+
     }
+
+    // public static function name($name) {
+    //     $count = count(self::$routes);
+    //     self::$routes[$count-1]['name'] = $name;
+    // }
+
+    // public static function url($name, $params = array()) {
+    //     foreach (self::$routes as $route) {
+    //         if (isset($route['name']) && $route['name'] === $name) {
+    //             $url = $route[1];
+
+    //             foreach ($params as $key => $value) {
+    //                 $url = str_replace('{' . $key . '}', $value, $url);
+    //             }
+
+    //             return $url;
+    //         }
+    //     }
+
+    //     return null;
+    // }
 
     
 
