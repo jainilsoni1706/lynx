@@ -341,6 +341,30 @@ use Lynx\System\Set\Set;
         exit;
     }
 
+    function removeNeighbours($array_first, $array_second) {
+        if (!(is_array($array_first) && is_array($array_second))) {
+            return false;    
+        }
+
+        $array_first = array_values($array_first);
+        $array_second = array_values($array_second);
+
+        $temp_first = $array_first;
+        $temp_second = $array_second;
+        
+        for ($i = 0; $i < count($array_first); $i++) {
+            for ($j = 0; $j < count($array_second); $j++) {
+             if ($array_first[$i] == $array_second[$j] && !(is_null($array_first[$i]) &&  is_null($array_second[$j]))) {
+                unset($temp_second[$j]);
+             } else {
+                break;
+             }
+            }   
+        }
+
+        return $temp_second;
+
+    }
 
 
     //not usable

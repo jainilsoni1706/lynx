@@ -11,3 +11,5 @@
 788 = invalid value passed to argument passed //Argument Exception
 789 = invalid number of args //SyntaxException
 707 = not found //AccessException
+719 = csrf token not found // SecurityException
+720 = csrf mismatch // SecurityException

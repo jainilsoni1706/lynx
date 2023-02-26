@@ -8,9 +8,8 @@ class Request {
 
 	public $request;
 
-	public function __construct($requests) {
+	public function __construct() {
 		$this->request = $_REQUEST;
-		array_push($this->request, $requests);
 	}
 
 	public static function get($key) {

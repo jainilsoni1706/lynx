@@ -30,6 +30,8 @@ class Route{
 
         $count = count(self::$routes);
         self::$routes[$count-1]['name'] = $name;
+
+        return new static;
     }
 
     public static function dispatch($callback) {
@@ -55,6 +57,14 @@ class Route{
             if ($_SERVER["REQUEST_METHOD"] !== $route['method']) {
                 throw new LynxException("LYNX701: ".$route['method']." Method is not supported for this request.",'Lynx/Component/HttpException', 701);
             }
+
+            if ($_SERVER["REQUEST_METHOD"] !== 'GET' && !isset($_POST['_token'])) {
+                throw new LynxException("LYNX719: CSRF token not found.",'Lynx/Component/SecurityException', 719);
+            }
+
+            if ($_SERVER["REQUEST_METHOD"] !== 'GET' && isset($_POST['_token'])  && $_POST['_token'] !== $_SESSION['_token']) {
+                throw new LynxException("LYNX720: CSRF token mismatched.",'Lynx/Component/SecurityException', 719);
+            }
     
             if (!is_string($route['uri'])) {
                 throw new LynxException("LYNX788: Expected string passed ".gettype($route['uri']).".",'Lynx/Component/SyntaxException', 788);
@@ -76,30 +86,28 @@ class Route{
                 throw new LynxException("LYNX707: Method ".($route['action'][1].'::'.$route['action'][1])." not found.",'Lynx/Component/AccessException', 707);
             }
 
-            $directoryName = explode('\\', __DIR__);
-
-            foreach ($directoryName as &$element) {
-                if (strpos($element, ":") !== false) {
-                    $element = null;
-                }
-            }
-            // work in progress
-            $directoryName = implode('/', array_filter($directoryName));
-
             $explodeCurrentRoute = array_filter(explode('/', $currentRoute));
-            unset($explodeCurrentRoute[1]);
-
+ 
             $explodeRoute = array_filter(explode('/', $route['uri']));
 
             foreach ($explodeRoute as &$element) {
                 $element = str_replace(array('{', '}'), '', $element);
             }
 
-            dd($directoryName);
-            dd($explodeCurrentRoute, $explodeRoute);
+            $rootDirectory = explode('\\', root_path());
 
-            if (count($explodeCurrentRoute) == count($explodeRoute)) {
+            $finalCurrentRoute = removeNeighbours($rootDirectory, $explodeCurrentRoute);
 
+            $requestAble = array_combine($explodeRoute, $finalCurrentRoute);
+
+            foreach ($requestAble as $key => $thisRequest) {
+                $_REQUEST[$key] = $thisRequest;                
+            }
+
+            if (count($finalCurrentRoute)  ==  count($explodeRoute)) {
+                $object = new $route['action'][0];
+                $callableMethod = (string)$route['action'][1];
+                return $object->$callableMethod(new Request($_REQUEST));
             }
 
         }

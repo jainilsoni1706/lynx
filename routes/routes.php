@@ -19,9 +19,11 @@ use Lynx\System\Routes\Route;
 
 Route::dispatch(function(){
 
-    // Route::get('/', [HomeController::class, 'index'])->name('first');
-    // Route::post('/change-language',[HomeController::class, 'changeLanguage'])->name('second');
-    // Route::get('model',[HomeController::class, 'model']);
+    Route::post('/change-language',[HomeController::class, 'changeLanguage'])->name('second');
+    Route::get('model',[HomeController::class, 'model']);
+    Route::get('/', [HomeController::class, 'index'])->name('first');
     Route::get('/create/{test}/{req}', [HomeController::class, 'create'])->name('fourth');
 
 })->use();
+
+// Route::get('/create/{test}/{req}', [HomeController::class, 'create'])->name('fourth')->use();
