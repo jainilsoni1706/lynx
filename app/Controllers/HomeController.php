@@ -24,7 +24,7 @@ class HomeController extends Controller{
         $this->moduleName = "Lynx Test Module";        
     }
 
-    public function index()
+    public function index(Request $request)
     {
         $moduleName = $this->moduleName . " - Home";
         $date = date('Y-m-d H:i:s');
@@ -34,7 +34,7 @@ class HomeController extends Controller{
 
     public function create(Request $request)
     {
-        dd($request->all());
+        dd('create method', $request->all());
         $moduleName = $this->moduleName . " - Insert";
         $date = date('Y-m-d H:i:s');
 

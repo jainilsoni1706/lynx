@@ -9,159 +9,317 @@ use App\Middleware\Handler;
 
 class Route{
 
-    protected static $routes = [];
+    public $routeArray = [];
 
-    public static function get($uri, $action) {
-        self::$routes[] = ['method' => 'GET', 'uri' => $uri, 'action' => $action];
+    protected static $_instance;
 
-        return new static();
+    protected $instance_key;
+
+    protected $instance_key_old;
+
+    public function __construct()
+    {
+        $this->instance_key = uniqid();        
     }
 
-    public static function post($uri, $action) {
-        self::$routes[] = ['method' => 'POST', 'uri' => $uri, 'action' => $action];
+    public static function getInstance()
+    {
+        $class = get_called_class();
 
-        return new static();
-    }
-
-    public function name($name = null) {
-        if (is_null($name) && !is_string($name)) {
-            throw new LynxException("LYNX788: Expected string passed ".gettype($name).".",'Lynx/Component/SyntaxException', 788);
+        if(!isset(self::$_instance))
+        {
+            self::$_instance = new $class;
         }
 
-        $count = count(self::$routes);
-        self::$routes[$count-1]['name'] = $name;
-
-        return new static;
+        return self::$_instance;
     }
 
-    public static function dispatch($callback) {
-        if (!is_callable($callback)) {
-            throw new LynxException("LYNX788: Expected callback passed ".gettype($callback).".",'Lynx/Component/SyntaxException', 788);
+    public static function collection($callableFunction)
+    {
+        if (!is_callable($callableFunction)) {
+            throw new LynxException("LYNX788: Expected function passed ".gettype($callableFunction).".",'Lynx/Component/SyntaxException', 788);
         }
 
-        $callback();
+        $callableFunction(self::getInstance());
 
-        return new static();
-    }
+        return self::getInstance();
+    }    
 
-    public function use() {
-        self::execute();
-    }
-
-    public static function execute() {
-
-        $currentRoute = $_SERVER['REQUEST_URI'];
-
-        foreach (self::$routes as $route) {
-
-            if ($_SERVER["REQUEST_METHOD"] !== $route['method']) {
-                throw new LynxException("LYNX701: ".$route['method']." Method is not supported for this request.",'Lynx/Component/HttpException', 701);
-            }
-
-            if ($_SERVER["REQUEST_METHOD"] !== 'GET' && !isset($_POST['_token'])) {
-                throw new LynxException("LYNX719: CSRF token not found.",'Lynx/Component/SecurityException', 719);
-            }
-
-            if ($_SERVER["REQUEST_METHOD"] !== 'GET' && isset($_POST['_token'])  && $_POST['_token'] !== $_SESSION['_token']) {
-                throw new LynxException("LYNX720: CSRF token mismatched.",'Lynx/Component/SecurityException', 719);
-            }
-    
-            if (!is_string($route['uri'])) {
-                throw new LynxException("LYNX788: Expected string passed ".gettype($route['uri']).".",'Lynx/Component/SyntaxException', 788);
-            }
-    
-            if (!is_array($route['action'])) {
-                throw new LynxException("LYNX788: Expected array passed ".gettype($route['action']).".",'Lynx/Component/ArgumentException', 788);
-            }
-    
-            if (count($route['action']) !== 2) {
-                throw new LynxException("LYNX789: Expected 2 arguments passed ".count($route['action']).".",'Lynx/Component/SyntaxException', 789);
-            }
-    
-            if (!class_exists($route['action'][0])) {
-                throw new LynxException("LYNX707: Class ".($route['action'][0])." not found.",'Lynx/Component/AccessException', 707);
-            }
-    
-            if (!method_exists($route['action'][0], $route['action'][1])) {
-                throw new LynxException("LYNX707: Method ".($route['action'][1].'::'.$route['action'][1])." not found.",'Lynx/Component/AccessException', 707);
-            }
-
-            $explodeCurrentRoute = array_filter(explode('/', $currentRoute));
- 
-            $explodeRoute = array_filter(explode('/', $route['uri']));
-
-            foreach ($explodeRoute as &$element) {
-                $element = str_replace(array('{', '}'), '', $element);
-            }
-
-            $rootDirectory = explode('\\', root_path());
-
-            $finalCurrentRoute = removeNeighbours($rootDirectory, $explodeCurrentRoute);
-
-            $requestAble = array_combine($explodeRoute, $finalCurrentRoute);
-
-            foreach ($requestAble as $key => $thisRequest) {
-                $_REQUEST[$key] = $thisRequest;                
-            }
-
-            if (count($finalCurrentRoute)  ==  count($explodeRoute)) {
-                $object = new $route['action'][0];
-                $callableMethod = (string)$route['action'][1];
-                return $object->$callableMethod(new Request($_REQUEST));
-            }
-
+    public function get($uri)
+    {
+        if (!is_string($uri)) {
+            throw new LynxException("LYNX788: Expected string passed ".gettype($uri).".",'Lynx/Component/SyntaxException', 788);            
         }
 
-        throw new LynxException("LYNX707: Request ".($currentRoute)." not found.",'Lynx/Component/HttpException', 707);
+        $this->routeArray[$this->instance_key]['uri'] = $uri;
+
+        return $this;
+    }
+
+    public function post($uri)
+    {
+        if (!is_string($uri)) {
+            throw new LynxException("LYNX788: Expected string passed ".gettype($uri).".",'Lynx/Component/SyntaxException', 788);            
+        }
+
+        $this->routeArray[$this->instance_key]['uri'] = $uri;
+
+        return $this;
+    }
+
+    public function put($uri)
+    {
+        if (!is_string($uri)) {
+            throw new LynxException("LYNX788: Expected string passed ".gettype($uri).".",'Lynx/Component/SyntaxException', 788);            
+        }
+
+        $this->routeArray[$this->instance_key]['uri'] = $uri;
+
+        return $this;
+    }
+
+    public function delete($uri)
+    {
+        if (!is_string($uri)) {
+            throw new LynxException("LYNX788: Expected string passed ".gettype($uri).".",'Lynx/Component/SyntaxException', 788);            
+        }
+
+        $this->routeArray[$this->instance_key]['uri'] = $uri;
+
+        return $this;
+    }
+
+    public function any($uri)
+    {
+        if (!is_string($uri)) {
+            throw new LynxException("LYNX788: Expected string passed ".gettype($uri).".",'Lynx/Component/SyntaxException', 788);            
+        }
+
+        $this->routeArray[$this->instance_key]['uri'] = $uri;
+
+        return $this;
+    }
+
+    public function method($method)
+    {
+        if (!is_string($method)) {
+            throw new LynxException("LYNX788: Expected string passed ".gettype($method).".",'Lynx/Component/SyntaxException', 788);            
+        }
+
+        $this->routeArray[$this->instance_key]['method'] = $method;
+
+        return $this;
+    }
+
+    public function alias($name)
+    {
+        if (!is_string($name)) {
+            throw new LynxException("LYNX788: Expected string passed ".gettype($name).".",'Lynx/Component/SyntaxException', 788);            
+        }
+
+        $this->routeArray[$this->instance_key]['alias'] = $name;
+
+        return $this;
+    }
+
+    public function params()
+    {
+
+        $params = func_get_args();
+
+        if (empty($params)) {
+            throw new LynxException("LYNX789: Expected at least an argument passed 0.",'Lynx/Component/SyntaxException', 789);
+        }
+
+        $this->routeArray[$this->instance_key]['params'] = $params;
+
+        return $this;
+    }
+
+    public function end()
+    {
+        $this->instance_key_old = $this->instance_key;        
+        $this->instance_key = uniqid();        
+
+        return;
+    }
+
+    public function terminate()
+    {
+        $this->instance_key_old = $this->instance_key;        
+        $this->instance_key = uniqid();        
+
+        return;
+    }
+
+    public function prefix($prefix)
+    {
+        if (!is_string($prefix)) {
+            throw new LynxException("LYNX788: Expected string passed ".gettype($prefix).".",'Lynx/Component/SyntaxException', 788);            
+        }
+
+        $this->routeArray[$this->instance_key_old]['prefix'] = $prefix;
+
+        return $this;
+    }
+
+    public function middleware()
+    {
+
+        $middlewares = func_get_args();
+
+        if (empty($middlewares)) {
+            throw new LynxException("LYNX789: Expected at least an argument passed 0.",'Lynx/Component/SyntaxException', 789);
+        }
+
+        $this->routeArray[$this->instance_key_old]['middlewares'] = $middlewares;
+
+        return $this;
+    }
+
+    public function of($class)
+    {
+        if (!class_exists($class)) {
+            throw new LynxException("LYNX707: Class ".($class)." not found.",'Lynx/Component/AccessException', 707);
+        }
+
+        $this->routeArray[$this->instance_key_old]['class'] = $class;
 
     }
 
-    // public static function name($name) {
+    public function __destruct()
+    {
+
+        dd($this->routeArray);
+
+        // $theseRoutes = [];
+        // $iteration = 0;
+
+        // foreach ($this->routeArray as $key => $route) {
+        //     $theseRoutes[$iteration][$key] = $route;
+        //     if ($key == 'uri') {
+        //         $iteration++;
+        //     }
+        // }
+
+        // dd($theseRoutes);
+    }
+
+    // protected static $routes = [];
+
+    // public static function get($uri, $action) {
+    //     self::executable(['method' => 'GET', 'uri' => $uri, 'action' => $action]);
+
+    //     return new static();
+    // }
+
+    // public static function post($uri, $action) {
+    //     self::executable(['method' => 'GET', 'uri' => $uri, 'action' => $action]);
+
+    //     return new static();
+    // }
+
+    // public function name($name = null) {
+    //     if (is_null($name) && !is_string($name)) {
+    //         throw new LynxException("LYNX788: Expected string passed ".gettype($name).".",'Lynx/Component/SyntaxException', 788);
+    //     }
+
     //     $count = count(self::$routes);
     //     self::$routes[$count-1]['name'] = $name;
     // }
 
-    // public static function url($name, $params = array()) {
-    //     foreach (self::$routes as $route) {
-    //         if (isset($route['name']) && $route['name'] === $name) {
-    //             $url = $route[1];
+    // public static function executable($route)
+    // {
+    //     $currentRoute = $_SERVER['REQUEST_URI'];
 
-    //             foreach ($params as $key => $value) {
-    //                 $url = str_replace('{' . $key . '}', $value, $url);
-    //             }
-
-    //             return $url;
+    //         if ($_SERVER["REQUEST_METHOD"] !== $route['method']) {
+    //             throw new LynxException("LYNX701: ".$route['method']." Method is not supported for this request.",'Lynx/Component/HttpException', 701);
     //         }
-    //     }
 
-    //     return null;
+    //         if ($_SERVER["REQUEST_METHOD"] !== 'GET' && !isset($_POST['_token'])) {
+    //             throw new LynxException("LYNX719: CSRF token not found.",'Lynx/Component/SecurityException', 719);
+    //         }
+
+    //         if ($_SERVER["REQUEST_METHOD"] !== 'GET' && isset($_POST['_token'])  && $_POST['_token'] !== $_SESSION['_token']) {
+    //             throw new LynxException("LYNX720: CSRF token mismatched.",'Lynx/Component/SecurityException', 719);
+    //         }
+    
+    //         if (!is_string($route['uri'])) {
+    //             throw new LynxException("LYNX788: Expected string passed ".gettype($route['uri']).".",'Lynx/Component/SyntaxException', 788);
+    //         }
+    
+    //         if (!is_array($route['action'])) {
+    //             throw new LynxException("LYNX788: Expected array passed ".gettype($route['action']).".",'Lynx/Component/ArgumentException', 788);
+    //         }
+    
+    //         if (count($route['action']) !== 2) {
+    //             throw new LynxException("LYNX789: Expected 2 arguments passed ".count($route['action']).".",'Lynx/Component/SyntaxException', 789);
+    //         }
+    
+    //         if (!class_exists($route['action'][0])) {
+    //             throw new LynxException("LYNX707: Class ".($route['action'][0])." not found.",'Lynx/Component/AccessException', 707);
+    //         }
+    
+    //         if (!method_exists($route['action'][0], $route['action'][1])) {
+    //             throw new LynxException("LYNX707: Method ".($route['action'][1].'::'.$route['action'][1])." not found.",'Lynx/Component/AccessException', 707);
+    //         }
+
+    //         $explodeCurrentRoute = array_filter(explode('/', $currentRoute));
+ 
+    //         $explodeRoute = array_filter(explode('/', $route['uri']));
+
+    //         foreach ($explodeRoute as &$element) {
+    //             $element = str_replace(array('{', '}'), '', $element);
+    //         }
+
+    //         $rootDirectory = explode('\\', root_path());
+
+    //         $finalCurrentRoute = removeNeighbours($rootDirectory, $explodeCurrentRoute);
+    //         dd($explodeRoute, $finalCurrentRoute);
+    //         $requestAble = array_combine($explodeRoute, $finalCurrentRoute);
+
+    //         foreach ($requestAble as $key => $thisRequest) {
+    //             $_REQUEST[$key] = $thisRequest;                
+    //         }
+
+    //         if (count($finalCurrentRoute)  ==  count($explodeRoute)) {
+    //             $object = new $route['action'][0];
+    //             $callableMethod = (string)$route['action'][1];
+    //             return $object->$callableMethod(new Request($_REQUEST));
+    //         }
+
+
+    //     throw new LynxException("LYNX707: Request ".($currentRoute)." not found.",'Lynx/Component/HttpException', 707);
     // }
 
-    
+    // public function of($class)
+    // {
 
-    public function route($name)
-    {
-        return $this;
-    }
+    // }
+
+    // public static function routes($callback){
+    //     $callback();
+    //     return new static();
+    // }
   
-    public function group($prefix, $callback){
-        $callback();
-    }
+    // public function group($prefix, $callback){
+    //     $callback();
+    // }
 
-    public static function middleware($middleware, $condition, $callback){
+    // public static function middleware($middleware, $condition, $callback){
 
-        $middlewaresList = new Handler();
+    //     $middlewaresList = new Handler();
 
-        if(!in_array($middleware, $middlewaresList->group)){
-            return new ApplicationException("Class App/Middlewares/$middleware::class not found.", "routes/routes.php", 404);
-        }
+    //     if(!in_array($middleware, $middlewaresList->group)){
+    //         return new ApplicationException("Class App/Middlewares/$middleware::class not found.", "routes/routes.php", 404);
+    //     }
 
-        try {
-            $middleware = new $middleware;
-        } catch (\Throwable $th) {
-            return new ApplicationException($th->getMessage(), "routes/routes.php", 404);
-        }
+    //     try {
+    //         $middleware = new $middleware;
+    //     } catch (\Throwable $th) {
+    //         return new ApplicationException($th->getMessage(), "routes/routes.php", 404);
+    //     }
 
-    }
+    // }
 
 }
