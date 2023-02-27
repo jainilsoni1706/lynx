@@ -189,20 +189,21 @@ class Route{
 
     public function __destruct()
     {
+        $this->routeArray = array_values($this->routeArray);
 
-        dd($this->routeArray);
+        for ($i = count($this->routeArray) - 1; $i >= 0; $i--) {
+            if ($this->routeArray[$i]['class'] == null) {
+                $this->routeArray[$i]['class'] = $this->routeArray[$i + 1]['class'];
 
-        // $theseRoutes = [];
-        // $iteration = 0;
+                if ($this->routeArray[$i + 1]['prefix'] !== null) {
+                    $this->routeArray[$i]['prefix'] = $this->routeArray[$i + 1]['prefix'];
+                }
 
-        // foreach ($this->routeArray as $key => $route) {
-        //     $theseRoutes[$iteration][$key] = $route;
-        //     if ($key == 'uri') {
-        //         $iteration++;
-        //     }
-        // }
-
-        // dd($theseRoutes);
+                if ($this->routeArray[$i + 1]['middleware'] !== null) {
+                    $this->routeArray[$i]['middleware'] = $this->routeArray[$i + 1]['middleware'];
+                }
+            }
+        }
     }
 
     // protected static $routes = [];
