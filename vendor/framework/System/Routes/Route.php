@@ -45,57 +45,57 @@ class Route{
         return self::getInstance();
     }    
 
-    public function get($uri)
+    public function get()
     {
-        if (!is_string($uri)) {
-            throw new LynxException("LYNX788: Expected string passed ".gettype($uri).".",'Lynx/Component/SyntaxException', 788);            
+        if (empty(func_get_args())) {
+            throw new LynxException("LYNX789: Expected at least an argument passed 0.",'Lynx/Component/SyntaxException', 789);
         }
 
-        $this->routeArray[$this->instance_key]['uri'] = $uri;
+        $this->routeArray[$this->instance_key]['uri'] = func_get_args();
 
         return $this;
     }
 
-    public function post($uri)
+    public function post()
     {
-        if (!is_string($uri)) {
-            throw new LynxException("LYNX788: Expected string passed ".gettype($uri).".",'Lynx/Component/SyntaxException', 788);            
+        if (empty(func_get_args())) {
+            throw new LynxException("LYNX789: Expected at least an argument passed 0.",'Lynx/Component/SyntaxException', 789);
         }
 
-        $this->routeArray[$this->instance_key]['uri'] = $uri;
+        $this->routeArray[$this->instance_key]['uri'] = func_get_args();
 
         return $this;
     }
 
-    public function put($uri)
+    public function put()
     {
-        if (!is_string($uri)) {
-            throw new LynxException("LYNX788: Expected string passed ".gettype($uri).".",'Lynx/Component/SyntaxException', 788);            
+        if (empty(func_get_args())) {
+            throw new LynxException("LYNX789: Expected at least an argument passed 0.",'Lynx/Component/SyntaxException', 789);
         }
 
-        $this->routeArray[$this->instance_key]['uri'] = $uri;
+        $this->routeArray[$this->instance_key]['uri'] = func_get_args();
 
         return $this;
     }
 
-    public function delete($uri)
+    public function delete()
     {
-        if (!is_string($uri)) {
-            throw new LynxException("LYNX788: Expected string passed ".gettype($uri).".",'Lynx/Component/SyntaxException', 788);            
+        if (empty(func_get_args())) {
+            throw new LynxException("LYNX789: Expected at least an argument passed 0.",'Lynx/Component/SyntaxException', 789);
         }
 
-        $this->routeArray[$this->instance_key]['uri'] = $uri;
+        $this->routeArray[$this->instance_key]['uri'] = func_get_args();
 
         return $this;
     }
 
-    public function any($uri)
+    public function any()
     {
-        if (!is_string($uri)) {
-            throw new LynxException("LYNX788: Expected string passed ".gettype($uri).".",'Lynx/Component/SyntaxException', 788);            
+        if (empty(func_get_args())) {
+            throw new LynxException("LYNX789: Expected at least an argument passed 0.",'Lynx/Component/SyntaxException', 789);
         }
 
-        $this->routeArray[$this->instance_key]['uri'] = $uri;
+        $this->routeArray[$this->instance_key]['uri'] = func_get_args();
 
         return $this;
     }
@@ -103,7 +103,7 @@ class Route{
     public function method($method)
     {
         if (!is_string($method)) {
-            throw new LynxException("LYNX788: Expected string passed ".gettype($method).".",'Lynx/Component/SyntaxException', 788);            
+            throw new LynxException("LYNX789: Expected at least an argument passed 0.",'Lynx/Component/SyntaxException', 789);
         }
 
         $this->routeArray[$this->instance_key]['method'] = $method;
@@ -114,7 +114,7 @@ class Route{
     public function alias($name)
     {
         if (!is_string($name)) {
-            throw new LynxException("LYNX788: Expected string passed ".gettype($name).".",'Lynx/Component/SyntaxException', 788);            
+            throw new LynxException("LYNX789: Expected at least an argument passed 0.",'Lynx/Component/SyntaxException', 789);
         }
 
         $this->routeArray[$this->instance_key]['alias'] = $name;
@@ -204,6 +204,18 @@ class Route{
                 }
             }
         }
+
+        // dd($this->routeArray);
+
+        $currentRoute = $_SERVER['REQUEST_URI'];
+        $explodeCurrentRoute = array_filter(explode('/', $currentRoute));
+
+        $rootDirectory = explode('\\', root_path());
+
+        foreach ($this->routeArray as $route) {
+            dd($route);
+        }
+
     }
 
     // protected static $routes = [];

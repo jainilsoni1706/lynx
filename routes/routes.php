@@ -39,7 +39,7 @@ use Lynx\System\Routes\Route;
 // })->prefix('admin')->middleware(['mid1', 'mid2'])->of(HomeController::class);
 
 Route::collection(function($callable){
-    $callable->get('five')->method('index')->alias('five')->end();
+    $callable->get('five','four')->method('index')->alias('five')->params('page','blog')->end();
 })->prefix('routable')->of(Routable::class);
 
 Route::collection(function($callable){
