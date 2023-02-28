@@ -3,6 +3,7 @@
 namespace App\Middleware;
 
 use App\Middleware\Authenticable;
+use App\Middleware\Testable;
 
 class Handler {
 
@@ -11,7 +12,8 @@ class Handler {
     public function __construct()
     {
         $this->group = [
-            Authenticable::class
+            Authenticable::class,
+            Testable::class
         ];        
     }
     

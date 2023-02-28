@@ -4,43 +4,14 @@ use App\Controllers\HomeController;
 use App\Controllers\TestController;
 use App\Controllers\Routable;
 use App\Middleware\Authenticable;
+use App\Middleware\Testable;
 use Lynx\System\Routes\Route;
 
-// Route::middleware(Authenticable::class, null, function(){
-
-    // Route::get('/', [HomeController::class, 'index']);
-    // Route::get('/create/{test}/{req}', [HomeController::class, 'create']);
-    // Route::post('/change-language',[HomeController::class, 'changeLanguage']);
-    // Route::get('model',[HomeController::class, 'model']);
-
-
-    // Route::post('/store', [HomeController::class, 'store']);
-    // Route::get('/update/post/{id}',[HomeController::class, 'store']);
-
-// });
-
-// Route::dispatch(function(){
-
-    // Route::post('/change-language',[HomeController::class, 'changeLanguage'])->name('second');
-    // Route::get('model',[HomeController::class, 'model']);
-    // Route::get('/index', [HomeController::class, 'index'])->name('first');
-    // Route::get('/create/{test}/{req}', [HomeController::class, 'create'])->name('fourth');
-
-// })->use();
-
-// Route::get('/create/{test}/{req}', [HomeController::class, 'create'])->name('fourth')->use();
-
-// Route::collection(function($callable) {
-//     $callable->get('home')->method('homeMethod')->name('home')->params(['entertainment','page']);
-//     $callable->post('home')->method('homeMethod')->name('home')->params(['entertainment','page']);
-//     $callable->put('home')->method('homeMethod')->name('home')->params(['entertainment','page']);
-//     $callable->delete('home')->method('homeMethod')->name('home')->params(['entertainment','page']);
-//     $callable->any('home')->method('homeMethod')->name('home')->params(['entertainment','page']);
-// })->prefix('admin')->middleware(['mid1', 'mid2'])->of(HomeController::class);
 
 Route::collection(function($callable){
+    $callable->get('ello')->method('hello')->alias('five')->end();
     $callable->get('five','four')->method('index')->alias('five')->params('page','blog')->end();
-})->prefix('routable')->of(Routable::class);
+})->prefix('routable')->middleware([Authenticable::class, 'jainil'], [Testable::class, 'jainil'])->of(Routable::class);
 
 Route::collection(function($callable){
     $callable->get('index')->method('index')->alias('index')->end();

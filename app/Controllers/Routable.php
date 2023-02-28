@@ -17,4 +17,9 @@
         dd($this->moduleName);
     }
 
+    public function hello()
+    {
+        dd('hello');
+    }
+
  } 

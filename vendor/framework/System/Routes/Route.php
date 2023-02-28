@@ -19,6 +19,7 @@ class Route{
 
     public function __construct()
     {
+        error_reporting(E_ERROR | E_PARSE);
         $this->instance_key = uniqid();        
     }
 
@@ -51,7 +52,7 @@ class Route{
             throw new LynxException("LYNX789: Expected at least an argument passed 0.",'Lynx/Component/SyntaxException', 789);
         }
 
-        $this->routeArray[$this->instance_key]['uri'] = func_get_args();
+        $this->routeArray[$this->instance_key]['uri'] = [func_get_args(), 'GET'];
 
         return $this;
     }
@@ -62,7 +63,7 @@ class Route{
             throw new LynxException("LYNX789: Expected at least an argument passed 0.",'Lynx/Component/SyntaxException', 789);
         }
 
-        $this->routeArray[$this->instance_key]['uri'] = func_get_args();
+        $this->routeArray[$this->instance_key]['uri'] = [func_get_args(), "POST"];
 
         return $this;
     }
@@ -73,7 +74,7 @@ class Route{
             throw new LynxException("LYNX789: Expected at least an argument passed 0.",'Lynx/Component/SyntaxException', 789);
         }
 
-        $this->routeArray[$this->instance_key]['uri'] = func_get_args();
+        $this->routeArray[$this->instance_key]['uri'] = [func_get_args(), "PUT"];
 
         return $this;
     }
@@ -84,7 +85,7 @@ class Route{
             throw new LynxException("LYNX789: Expected at least an argument passed 0.",'Lynx/Component/SyntaxException', 789);
         }
 
-        $this->routeArray[$this->instance_key]['uri'] = func_get_args();
+        $this->routeArray[$this->instance_key]['uri'] = [func_get_args(), 'DELETE'];
 
         return $this;
     }
@@ -95,7 +96,7 @@ class Route{
             throw new LynxException("LYNX789: Expected at least an argument passed 0.",'Lynx/Component/SyntaxException', 789);
         }
 
-        $this->routeArray[$this->instance_key]['uri'] = func_get_args();
+        $this->routeArray[$this->instance_key]['uri'] = [func_get_args(), "ANY"];
 
         return $this;
     }
@@ -191,7 +192,7 @@ class Route{
     {
         $this->routeArray = array_values($this->routeArray);
 
-        for ($i = count($this->routeArray) - 1; $i >= 0; $i--) {
+        for ($i = @count($this->routeArray) - 1; $i >= 0; $i--) {
             if ($this->routeArray[$i]['class'] == null) {
                 $this->routeArray[$i]['class'] = $this->routeArray[$i + 1]['class'];
 
@@ -205,162 +206,99 @@ class Route{
             }
         }
 
-        $dispatchable = ['parser' => false, 'request' => []];
+        $dispatchable = ['parser' => false, 'request' => [], 'middlware' => []];
 
         $currentRoute = $_SERVER['REQUEST_URI'];
         $explodeCurrentRoute = array_filter(explode('/', $currentRoute));
 
-        $rootDirectory = explode('\\', root_path());
-        $explodeCurrentRoute = array_values(removeNeighbours($rootDirectory, $explodeCurrentRoute));
-        
-        foreach ($this->routeArray as $route) {
-            $readableURI = array_merge($route['uri'], $route['params']);
+        try {
+            $rootDirectory = explode('\\', root_path());
+            $explodeCurrentRoute = array_values(removeNeighbours($rootDirectory, $explodeCurrentRoute));
+            
+            foreach ($this->routeArray as $route) {
+                $readableURI = @array_merge($route['uri'][0], $route['params']);
 
-            if (count($readableURI) == count($explodeCurrentRoute)) {
-                $isURICorrect = true;
-                for ($i = 0; $i < count($route['uri']); $i++) {
-                    if ($explodeCurrentRoute[$i] !== $readableURI[$i]) {
-                        $isURICorrect = false;
+                if (empty($route['params'])) {
+                    $readableURI = array_values($route['uri'][0]);
+                } 
+
+
+                if (@count($readableURI) == @count($explodeCurrentRoute)) {
+                    
+                    $isURICorrect = true;
+                    for ($i = 0; $i < @count($route['uri'][0]); $i++) {
+                        if ($explodeCurrentRoute[$i] !== $readableURI[$i]) {
+                            $isURICorrect = false;
+                        }
+                    }
+    
+                    if ($isURICorrect) {
+                        if (@count($readableURI) == @count($explodeCurrentRoute)) {
+                            $finalRequest = @array_combine($readableURI, $explodeCurrentRoute);
+                                foreach ($finalRequest as $requestKey => $requestValue) {
+                                    if ($requestKey == $requestValue) {
+                                        unset($finalRequest[$requestKey]);
+                                    }
+                                }
+                            $dispatchable = ['parser' => true, 'request' => $finalRequest, 'class' => $route['class'], 'method' => $route['method'], 'http_method' => $route['uri'][1], 'middleware' => $route['middlewares']];
+                        }                 
+                    }
+                }
+            }
+    
+    
+            if ($dispatchable['parser']) {
+    
+            if ($_SERVER["REQUEST_METHOD"] !== $dispatchable['http_method']) {
+                throw new LynxException("LYNX701: ".$dispatchable['http_method']." Method is not supported for this request.",'Lynx/Component/HttpException', 701);
+            }
+
+            if ($_SERVER["REQUEST_METHOD"] !== 'GET' && !isset($_POST['_token'])) {
+                throw new LynxException("LYNX719: CSRF token not found.",'Lynx/Component/SecurityException', 719);
+            }
+
+            if ($_SERVER["REQUEST_METHOD"] !== 'GET' && isset($_POST['_token'])  && $_POST['_token'] !== $_SESSION['_token']) {
+                throw new LynxException("LYNX720: CSRF token mismatched.",'Lynx/Component/SecurityException', 719);
+            }
+
+            Request::requestifier($dispatchable['request']);
+
+            if (!empty($dispatchable['middleware'])) {
+
+                $middlewareHandler = new Handler();
+
+                foreach ($dispatchable['middleware'] as $eachMiddlware) {
+                    if (@count($eachMiddlware) !== 2) {
+                        throw new LynxException("LYNX789: Expected two argument passed ".(@count($eachMiddlware)).".",'Lynx/Component/SyntaxException', 789);
+                    }
+
+                    if(!in_array($eachMiddlware[0], $middlewareHandler->group)){
+                        throw new LynxException("LYNX707: Class ".($eachMiddlware[0])." not found or not registered.",'Lynx/Component/AccessException', 707);
+                    }
+
+                    try {
+                        $middlewareObject = new $eachMiddlware[0]();
+                        $middlewareObject->handle(new Request(), $eachMiddlware[1]);
+
+                    } catch (\Exception $e) {
+                        throw new LynxException($e->getMessage(), 'Lynx/Component/ExceptionException', 000);
                     }
                 }
 
-                if ($isURICorrect) {
-                    if (count($readableURI) == count($explodeCurrentRoute)) {
-                        $finalRequest = array_combine($readableURI, $explodeCurrentRoute);
-                            foreach ($finalRequest as $requestKey => $requestValue) {
-                                if ($requestKey == $requestValue) {
-                                    unset($finalRequest[$requestKey]);
-                                }
-                            }
-                        $dispatchable = ['parser' => true, 'request' => $finalRequest, 'class' => $route['class'], 'method' => $route['method']];
-                    }                 
-                }
             }
+
+                $object = new $dispatchable['class']();
+                $stringableMethod = strval($dispatchable['method']);
+                $object->$stringableMethod(new Request());
+    
+            } else {
+                throw new LynxException("LYNX701: ".$_SERVER['REQUEST_URI']." does not exist in your route collection.",'Lynx/Component/HttpException', 701);
+            }
+
+        } catch (\Exception $e) {
+                throw new LynxException("LYNX000: ".$e->getMessage().".",'Lynx/Component/ExceptionException', 000);
         }
 
-
-        if ($dispatchable['parser']) {
-
-        } else {
-            throw new LynxException("LYNX701: ".$_SERVER['REQUEST_URI']." does not exist in your route collection.",'Lynx/Component/HttpException', 701);
-        }
     }
-
-    // protected static $routes = [];
-
-    // public static function get($uri, $action) {
-    //     self::executable(['method' => 'GET', 'uri' => $uri, 'action' => $action]);
-
-    //     return new static();
-    // }
-
-    // public static function post($uri, $action) {
-    //     self::executable(['method' => 'GET', 'uri' => $uri, 'action' => $action]);
-
-    //     return new static();
-    // }
-
-    // public function name($name = null) {
-    //     if (is_null($name) && !is_string($name)) {
-    //         throw new LynxException("LYNX788: Expected string passed ".gettype($name).".",'Lynx/Component/SyntaxException', 788);
-    //     }
-
-    //     $count = count(self::$routes);
-    //     self::$routes[$count-1]['name'] = $name;
-    // }
-
-    // public static function executable($route)
-    // {
-    //     $currentRoute = $_SERVER['REQUEST_URI'];
-
-    //         if ($_SERVER["REQUEST_METHOD"] !== $route['method']) {
-    //             throw new LynxException("LYNX701: ".$route['method']." Method is not supported for this request.",'Lynx/Component/HttpException', 701);
-    //         }
-
-    //         if ($_SERVER["REQUEST_METHOD"] !== 'GET' && !isset($_POST['_token'])) {
-    //             throw new LynxException("LYNX719: CSRF token not found.",'Lynx/Component/SecurityException', 719);
-    //         }
-
-    //         if ($_SERVER["REQUEST_METHOD"] !== 'GET' && isset($_POST['_token'])  && $_POST['_token'] !== $_SESSION['_token']) {
-    //             throw new LynxException("LYNX720: CSRF token mismatched.",'Lynx/Component/SecurityException', 719);
-    //         }
-    
-    //         if (!is_string($route['uri'])) {
-    //             throw new LynxException("LYNX788: Expected string passed ".gettype($route['uri']).".",'Lynx/Component/SyntaxException', 788);
-    //         }
-    
-    //         if (!is_array($route['action'])) {
-    //             throw new LynxException("LYNX788: Expected array passed ".gettype($route['action']).".",'Lynx/Component/ArgumentException', 788);
-    //         }
-    
-    //         if (count($route['action']) !== 2) {
-    //             throw new LynxException("LYNX789: Expected 2 arguments passed ".count($route['action']).".",'Lynx/Component/SyntaxException', 789);
-    //         }
-    
-    //         if (!class_exists($route['action'][0])) {
-    //             throw new LynxException("LYNX707: Class ".($route['action'][0])." not found.",'Lynx/Component/AccessException', 707);
-    //         }
-    
-    //         if (!method_exists($route['action'][0], $route['action'][1])) {
-    //             throw new LynxException("LYNX707: Method ".($route['action'][1].'::'.$route['action'][1])." not found.",'Lynx/Component/AccessException', 707);
-    //         }
-
-    //         $explodeCurrentRoute = array_filter(explode('/', $currentRoute));
- 
-    //         $explodeRoute = array_filter(explode('/', $route['uri']));
-
-    //         foreach ($explodeRoute as &$element) {
-    //             $element = str_replace(array('{', '}'), '', $element);
-    //         }
-
-    //         $rootDirectory = explode('\\', root_path());
-
-    //         $finalCurrentRoute = removeNeighbours($rootDirectory, $explodeCurrentRoute);
-    //         dd($explodeRoute, $finalCurrentRoute);
-    //         $requestAble = array_combine($explodeRoute, $finalCurrentRoute);
-
-    //         foreach ($requestAble as $key => $thisRequest) {
-    //             $_REQUEST[$key] = $thisRequest;                
-    //         }
-
-    //         if (count($finalCurrentRoute)  ==  count($explodeRoute)) {
-    //             $object = new $route['action'][0];
-    //             $callableMethod = (string)$route['action'][1];
-    //             return $object->$callableMethod(new Request($_REQUEST));
-    //         }
-
-
-    //     throw new LynxException("LYNX707: Request ".($currentRoute)." not found.",'Lynx/Component/HttpException', 707);
-    // }
-
-    // public function of($class)
-    // {
-
-    // }
-
-    // public static function routes($callback){
-    //     $callback();
-    //     return new static();
-    // }
-  
-    // public function group($prefix, $callback){
-    //     $callback();
-    // }
-
-    // public static function middleware($middleware, $condition, $callback){
-
-    //     $middlewaresList = new Handler();
-
-    //     if(!in_array($middleware, $middlewaresList->group)){
-    //         return new ApplicationException("Class App/Middlewares/$middleware::class not found.", "routes/routes.php", 404);
-    //     }
-
-    //     try {
-    //         $middleware = new $middleware;
-    //     } catch (\Throwable $th) {
-    //         return new ApplicationException($th->getMessage(), "routes/routes.php", 404);
-    //     }
-
-    // }
 
 }

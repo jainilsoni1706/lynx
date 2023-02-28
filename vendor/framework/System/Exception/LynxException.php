@@ -16,4 +16,9 @@ class LynxException extends \Exception
         return __CLASS__ . ": [{$this->code}]: {$this->message}\n";
     }
 
+    public function retrieveMessage()
+    {
+
+    }
+
 }

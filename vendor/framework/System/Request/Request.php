@@ -136,6 +136,12 @@ class Request {
 		return $projectUrl.$url;
 	}
 
+	public static function requestifier($array)
+	{
+		foreach ($array as $key => $element) {
+			$_REQUEST[$key] = $element;
+		}
+	}
 }
 
 function url($url) {
@@ -147,4 +153,16 @@ function redirect($url, $statusCode = 303) {
 	$projectUrl = $_SERVER['REQUEST_SCHEME'] . '://' . $_SERVER['HTTP_HOST'] . str_replace('index.php', '', $_SERVER['SCRIPT_NAME']);
 	header('Location: ' . $projectUrl.$url, true, $statusCode);
 	die();
+
+
+// // //
+
+function requestifier($array)
+{
+	foreach ($array as $key => $element) {
+		$_REQUEST[$key] = $element;
+	}
+}
+
+
 }

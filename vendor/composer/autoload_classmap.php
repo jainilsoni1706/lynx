@@ -11,6 +11,7 @@ return array(
     'App\\Commands\\Tester' => $baseDir . '/app/Commands/Tester.php',
     'App\\Controllers\\Controller' => $baseDir . '/app/Controllers/Controller.php',
     'App\\Controllers\\HomeController' => $baseDir . '/app/Controllers/HomeController.php',
+    'App\\Controllers\\Routable' => $baseDir . '/app/Controllers/Routable.php',
     'App\\Controllers\\TestController' => $baseDir . '/app/Controllers/TestController.php',
     'App\\Middleware\\Authenticable' => $baseDir . '/app/Middleware/Authenticable.php',
     'App\\Middleware\\Handler' => $baseDir . '/app/Middleware/Handler.php',

@@ -38,6 +38,7 @@ class ComposerStaticInit98b2ef19afb75cc0917be9f0cf7a94db
         'App\\Commands\\Tester' => __DIR__ . '/../..' . '/app/Commands/Tester.php',
         'App\\Controllers\\Controller' => __DIR__ . '/../..' . '/app/Controllers/Controller.php',
         'App\\Controllers\\HomeController' => __DIR__ . '/../..' . '/app/Controllers/HomeController.php',
+        'App\\Controllers\\Routable' => __DIR__ . '/../..' . '/app/Controllers/Routable.php',
         'App\\Controllers\\TestController' => __DIR__ . '/../..' . '/app/Controllers/TestController.php',
         'App\\Middleware\\Authenticable' => __DIR__ . '/../..' . '/app/Middleware/Authenticable.php',
         'App\\Middleware\\Handler' => __DIR__ . '/../..' . '/app/Middleware/Handler.php',
