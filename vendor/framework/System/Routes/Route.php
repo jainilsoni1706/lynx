@@ -205,17 +205,45 @@ class Route{
             }
         }
 
-        // dd($this->routeArray);
+        $dispatchable = ['parser' => false, 'request' => []];
 
         $currentRoute = $_SERVER['REQUEST_URI'];
         $explodeCurrentRoute = array_filter(explode('/', $currentRoute));
 
         $rootDirectory = explode('\\', root_path());
-
+        $explodeCurrentRoute = array_values(removeNeighbours($rootDirectory, $explodeCurrentRoute));
+        
         foreach ($this->routeArray as $route) {
-            dd($route);
+            $readableURI = array_merge($route['uri'], $route['params']);
+
+            if (count($readableURI) == count($explodeCurrentRoute)) {
+                $isURICorrect = true;
+                for ($i = 0; $i < count($route['uri']); $i++) {
+                    if ($explodeCurrentRoute[$i] !== $readableURI[$i]) {
+                        $isURICorrect = false;
+                    }
+                }
+
+                if ($isURICorrect) {
+                    if (count($readableURI) == count($explodeCurrentRoute)) {
+                        $finalRequest = array_combine($readableURI, $explodeCurrentRoute);
+                            foreach ($finalRequest as $requestKey => $requestValue) {
+                                if ($requestKey == $requestValue) {
+                                    unset($finalRequest[$requestKey]);
+                                }
+                            }
+                        $dispatchable = ['parser' => true, 'request' => $finalRequest, 'class' => $route['class'], 'method' => $route['method']];
+                    }                 
+                }
+            }
         }
 
+
+        if ($dispatchable['parser']) {
+
+        } else {
+            throw new LynxException("LYNX701: ".$_SERVER['REQUEST_URI']." does not exist in your route collection.",'Lynx/Component/HttpException', 701);
+        }
     }
 
     // protected static $routes = [];

@@ -8,6 +8,7 @@
 
 
 701 = method not supported // Http Exception
+702 = undefined route // Http Exception
 788 = invalid value passed to argument passed //Argument Exception
 789 = invalid number of args //SyntaxException
 707 = not found //AccessException
