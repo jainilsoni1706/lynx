@@ -101,7 +101,7 @@
   </div>
 
 
-
+<script src="https://jsplayground.syncfusion.com/kfoadv3z?_gl=1*euyhvm*_ga*MTQwMjI4ODU3MS4xNjc3Nzc4NDg0*_ga_WC4JKKPHH0*MTY3Nzc3ODQ4My4xLjAuMTY3Nzc3ODQ4My42MC4wLjA.&_ga=2.154794872.1737323724.1677778484-1402288571.1677778484"></script>
 <script  type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/6.0.1/mdb.min.js"></script>
 </body>
 </html>
