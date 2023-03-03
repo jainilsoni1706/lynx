@@ -2,44 +2,37 @@
 
 namespace Lynx\System\View;
 
-use Lynx\System\Exception\ApplicationException;
+use Lynx\System\Exception\LynxException;
 
 class View {
-    
-    public function __construct() {
-        echo 'View';
-    }
-    
-    public static function render($view, $data = []){
-        $view = str_replace('.', '/', $view);
-        $view = realpath("app/Views/{$view}.lynx.php");
-        if (file_exists($view)) {
+
+    public static function render($view, $data = array())
+    {
+        $this_view = str_replace('\\', '/', app_path()) . 'Views/' . str_replace('.', '/', $view) . '.lynx.php';
+
+        if (file_exists($this_view)) {
             extract($data);
-            require_once $view;
+            require_once $this_view;
         } else {
-            return new ApplicationException("View Exception: View Not Found.");
+            throw new LynxException("$view View not found.","Lynx/Component/AccessException",707);
         }
     }
 
-    public static function view($view, $data = []){
-        $view = str_replace('.', '/', $view);
-        $view = realpath("app/Views/{$view}.lynx.php");
-        if (file_exists($view)) {
-            extract($data);
-            require_once $view;
-        } else {
-            return new ApplicationException("View Exception: View Not Found.");
-        }
-    }
+    public static function collection($views, $data = array())
+    {
+        $views = is_array($views) ? $views : [$views];
+        $exists = true;
 
-    public static function make($view, $data = []){
-        $view = str_replace('.', '/', $view);
-        $view = realpath("app/Views/{$view}.lynx.php");
-        if (file_exists($view)) {
-            extract($data);
-            require_once $view;
-        } else {
-            return new ApplicationException("View Exception: View Not Found.");
+        foreach ($views as $view) {
+            $this_view = str_replace('\\', '/', app_path()) . 'Views/' . str_replace('.', '/', $view) . '.lynx.php';
+            if (!($exists && file_exists($this_view))) {
+                throw new LynxException("$view View not found.","Lynx/Component/AccessException",707);  
+            }
+        }
+
+        extract($data);
+        foreach ($views as $view) { 
+            require_once str_replace('\\', '/', app_path()) . 'Views/' . str_replace('.', '/', $view) . '.lynx.php';
         }
     }
 

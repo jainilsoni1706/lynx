@@ -153,13 +153,16 @@ class Route{
         return;
     }
 
-    public function prefix($prefix)
+    public function prefix()
     {
-        if (!is_string($prefix)) {
-            throw new LynxException("LYNX788: Expected string passed ".gettype($prefix).".",'Lynx/Component/SyntaxException', 788);            
+
+        $prefixes = func_get_args();
+
+        if (empty($prefixes)) {
+            throw new LynxException("LYNX788: Expected string passed ".gettype($prefixes).".",'Lynx/Component/SyntaxException', 788);            
         }
 
-        $this->routeArray[$this->instance_key_old]['prefix'] = $prefix;
+        $this->routeArray[$this->instance_key_old]['prefix'] = $prefixes;
 
         return $this;
     }
@@ -196,11 +199,11 @@ class Route{
             if ($this->routeArray[$i]['class'] == null) {
                 $this->routeArray[$i]['class'] = $this->routeArray[$i + 1]['class'];
 
-                if ($this->routeArray[$i + 1]['prefix'] !== null) {
+                if (!empty($this->routeArray[$i + 1]['prefix'])) {
                     $this->routeArray[$i]['prefix'] = $this->routeArray[$i + 1]['prefix'];
                 }
 
-                if ($this->routeArray[$i + 1]['middleware'] !== null) {
+                if (!empty($this->routeArray[$i + 1]['middleware'])) {
                     $this->routeArray[$i]['middleware'] = $this->routeArray[$i + 1]['middleware'];
                 }
             }
@@ -222,9 +225,16 @@ class Route{
                     $readableURI = array_values($route['uri'][0]);
                 } 
 
+                $mainPrefix = [];
+
+                foreach ((is_array($route['prefix']) ? $route['prefix'] : [$route['prefix']]) as $thisPrefix) {
+                    array_push($mainPrefix, $thisPrefix);
+                }
+
+                $readableURI = array_merge($mainPrefix, $readableURI);
 
                 if (@count($readableURI) == @count($explodeCurrentRoute)) {
-                    
+
                     $isURICorrect = true;
                     for ($i = 0; $i < @count($route['uri'][0]); $i++) {
                         if ($explodeCurrentRoute[$i] !== $readableURI[$i]) {
@@ -241,8 +251,15 @@ class Route{
                                     }
                                 }
                             $dispatchable = ['parser' => true, 'request' => $finalRequest, 'class' => $route['class'], 'method' => $route['method'], 'http_method' => $route['uri'][1], 'middleware' => $route['middlewares']];
+                            break;
+                        } else {
+                            continue;
                         }                 
+                    } else {
+                        continue;
                     }
+                } else {
+                    continue;
                 }
             }
     
@@ -261,6 +278,14 @@ class Route{
                 throw new LynxException("LYNX720: CSRF token mismatched.",'Lynx/Component/SecurityException', 719);
             }
 
+            if (!class_exists($dispatchable['class'])) {
+                throw new LynxException("LYNX707: Class ".($dispatchable['class'])." does not exists.",'Lynx/Component/AccessException', 707);
+            }
+
+            if (!method_exists($dispatchable['class'], $dispatchable['method'])) {
+                throw new LynxException("LYNX707: Method ".($dispatchable['class'])."::".($dispatchable['method'])." does not exists.",'Lynx/Component/AccessException', 707);
+            }
+
             Request::requestifier($dispatchable['request']);
 
             if (!empty($dispatchable['middleware'])) {
@@ -273,7 +298,7 @@ class Route{
                     }
 
                     if(!in_array($eachMiddlware[0], $middlewareHandler->group)){
-                        throw new LynxException("LYNX707: Class ".($eachMiddlware[0])." not found or not registered.",'Lynx/Component/AccessException', 707);
+                        throw new LynxException("LYNX707: Class ".($eachMiddlware[0])." does not exists or not registered.",'Lynx/Component/AccessException', 707);
                     }
 
                     try {

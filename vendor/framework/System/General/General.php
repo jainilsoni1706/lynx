@@ -1,5 +1,6 @@
 <?php
 
+use Lynx\System\Exception\LynxException;
 use Lynx\System\Localization\Lang;
 use Lynx\System\File\File;
 use Lynx\System\Set\Set;
@@ -366,6 +367,17 @@ use Lynx\System\Set\Set;
 
     }
 
+    function view($view, $data = array())
+    {
+        $this_view = str_replace('\\', '/', app_path()) . 'Views/' . str_replace('.', '/', $view) . '.lynx.php';
+
+        if (file_exists($this_view)) {
+            extract($data);
+            require_once $this_view;
+        } else {
+            throw new LynxException("$view View not found.","Lynx/Component/AccessException",707);
+        }
+    }
 
     //not usable
     //not usable

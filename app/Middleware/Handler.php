@@ -4,6 +4,7 @@ namespace App\Middleware;
 
 use App\Middleware\Authenticable;
 use App\Middleware\Testable;
+use App\Middleware\PreventionGate;
 
 class Handler {
 
@@ -13,7 +14,8 @@ class Handler {
     {
         $this->group = [
             Authenticable::class,
-            Testable::class
+            Testable::class,
+            PreventionGate::class
         ];        
     }
     

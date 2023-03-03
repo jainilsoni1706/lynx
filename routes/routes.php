@@ -1,12 +1,15 @@
 <?php
 
+use App\Controllers\BlogController;
 use App\Controllers\HomeController;
 use App\Controllers\TestController;
 use App\Controllers\Routable;
-use App\Middleware\Authenticable;
-use App\Middleware\Testable;
+use App\Middleware\PreventionGate;
 use Lynx\System\Routes\Route;
 
+Route::collection(function($route){
+    $route->get('dashboard')->method('index')->terminate();
+})->prefix('admin')->middleware([PreventionGate::class, []])->of(BlogController::class);
 
 Route::collection(function($callable){
     $callable->get('ello')->method('hello')->alias('five')->end();
