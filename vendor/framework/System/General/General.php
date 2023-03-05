@@ -375,9 +375,10 @@ use Lynx\System\Set\Set;
             extract($data);
             require_once $this_view;
         } else {
-            throw new LynxException("$view View not found.","Lynx/Component/AccessException",707);
+            throw new LynxException("$view View not found.","Lynx/ErrorComponents/AccessException",707);
         }
     }
+
 
     //not usable
     //not usable

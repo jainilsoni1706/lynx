@@ -2,7 +2,6 @@
 
 namespace Lynx\System\Routes;
 
-use Lynx\System\Exception\ApplicationException;
 use Lynx\System\Exception\LynxException;
 use Lynx\System\Request\Request;
 use App\Middleware\Handler;
@@ -23,7 +22,7 @@ class Route{
         $this->instance_key = uniqid();        
     }
 
-    public static function getInstance()
+    public static function getInstance(): object
     {
         $class = get_called_class();
 
@@ -35,10 +34,10 @@ class Route{
         return self::$_instance;
     }
 
-    public static function collection($callableFunction)
+    public static function collection($callableFunction): object
     {
         if (!is_callable($callableFunction)) {
-            throw new LynxException("LYNX788: Expected function passed ".gettype($callableFunction).".",'Lynx/Component/SyntaxException', 788);
+            throw new LynxException("LYNX788: Expected function passed ".gettype($callableFunction).".",'Lynx/ErrorComponents/SyntaxException', 788);
         }
 
         $callableFunction(self::getInstance());
@@ -46,10 +45,12 @@ class Route{
         return self::getInstance();
     }    
 
-    public function get()
+    public function get(): self
     {
-        if (empty(func_get_args())) {
-            throw new LynxException("LYNX789: Expected at least an argument passed 0.",'Lynx/Component/SyntaxException', 789);
+        foreach (func_get_args() as $arg) {
+            if (!is_string($arg)) {
+                throw new LynxException("LYNX788: Expected string passed ".gettype($arg).".",'Lynx/ErrorComponents/SyntaxException', 788);
+            }
         }
 
         $this->routeArray[$this->instance_key]['uri'] = [func_get_args(), 'GET'];
@@ -57,10 +58,10 @@ class Route{
         return $this;
     }
 
-    public function post()
+    public function post(): self
     {
         if (empty(func_get_args())) {
-            throw new LynxException("LYNX789: Expected at least an argument passed 0.",'Lynx/Component/SyntaxException', 789);
+            throw new LynxException("LYNX789: Expected at least an argument passed 0.",'Lynx/ErrorComponents/SyntaxException', 789);
         }
 
         $this->routeArray[$this->instance_key]['uri'] = [func_get_args(), "POST"];
@@ -68,10 +69,10 @@ class Route{
         return $this;
     }
 
-    public function put()
+    public function put(): self
     {
         if (empty(func_get_args())) {
-            throw new LynxException("LYNX789: Expected at least an argument passed 0.",'Lynx/Component/SyntaxException', 789);
+            throw new LynxException("LYNX789: Expected at least an argument passed 0.",'Lynx/ErrorComponents/SyntaxException', 789);
         }
 
         $this->routeArray[$this->instance_key]['uri'] = [func_get_args(), "PUT"];
@@ -79,10 +80,10 @@ class Route{
         return $this;
     }
 
-    public function delete()
+    public function delete(): self
     {
         if (empty(func_get_args())) {
-            throw new LynxException("LYNX789: Expected at least an argument passed 0.",'Lynx/Component/SyntaxException', 789);
+            throw new LynxException("LYNX789: Expected at least an argument passed 0.",'Lynx/ErrorComponents/SyntaxException', 789);
         }
 
         $this->routeArray[$this->instance_key]['uri'] = [func_get_args(), 'DELETE'];
@@ -90,10 +91,10 @@ class Route{
         return $this;
     }
 
-    public function any()
+    public function any(): self
     {
         if (empty(func_get_args())) {
-            throw new LynxException("LYNX789: Expected at least an argument passed 0.",'Lynx/Component/SyntaxException', 789);
+            throw new LynxException("LYNX789: Expected at least an argument passed 0.",'Lynx/ErrorComponents/SyntaxException', 789);
         }
 
         $this->routeArray[$this->instance_key]['uri'] = [func_get_args(), "ANY"];
@@ -101,10 +102,10 @@ class Route{
         return $this;
     }
 
-    public function method($method)
+    public function method($method): self
     {
         if (!is_string($method)) {
-            throw new LynxException("LYNX789: Expected at least an argument passed 0.",'Lynx/Component/SyntaxException', 789);
+            throw new LynxException("LYNX789: Expected at least an argument passed 0.",'Lynx/ErrorComponents/SyntaxException', 789);
         }
 
         $this->routeArray[$this->instance_key]['method'] = $method;
@@ -112,10 +113,10 @@ class Route{
         return $this;
     }
 
-    public function alias($name)
+    public function alias($name): self
     {
         if (!is_string($name)) {
-            throw new LynxException("LYNX789: Expected at least an argument passed 0.",'Lynx/Component/SyntaxException', 789);
+            throw new LynxException("LYNX789: Expected at least an argument passed 0.",'Lynx/ErrorComponents/SyntaxException', 789);
         }
 
         $this->routeArray[$this->instance_key]['alias'] = $name;
@@ -123,13 +124,13 @@ class Route{
         return $this;
     }
 
-    public function params()
+    public function params(): self
     {
 
         $params = func_get_args();
 
         if (empty($params)) {
-            throw new LynxException("LYNX789: Expected at least an argument passed 0.",'Lynx/Component/SyntaxException', 789);
+            throw new LynxException("LYNX789: Expected at least an argument passed 0.",'Lynx/ErrorComponents/SyntaxException', 789);
         }
 
         $this->routeArray[$this->instance_key]['params'] = $params;
@@ -137,7 +138,7 @@ class Route{
         return $this;
     }
 
-    public function end()
+    public function end(): void
     {
         $this->instance_key_old = $this->instance_key;        
         $this->instance_key = uniqid();        
@@ -145,7 +146,7 @@ class Route{
         return;
     }
 
-    public function terminate()
+    public function terminate(): void
     {
         $this->instance_key_old = $this->instance_key;        
         $this->instance_key = uniqid();        
@@ -153,13 +154,13 @@ class Route{
         return;
     }
 
-    public function prefix()
+    public function prefix(): self
     {
 
         $prefixes = func_get_args();
 
         if (empty($prefixes)) {
-            throw new LynxException("LYNX788: Expected string passed ".gettype($prefixes).".",'Lynx/Component/SyntaxException', 788);            
+            throw new LynxException("LYNX788: Expected string passed ".gettype($prefixes).".",'Lynx/ErrorComponents/SyntaxException', 788);            
         }
 
         $this->routeArray[$this->instance_key_old]['prefix'] = $prefixes;
@@ -167,13 +168,13 @@ class Route{
         return $this;
     }
 
-    public function middleware()
+    public function middleware(): self
     {
 
         $middlewares = func_get_args();
 
         if (empty($middlewares)) {
-            throw new LynxException("LYNX789: Expected at least an argument passed 0.",'Lynx/Component/SyntaxException', 789);
+            throw new LynxException("LYNX789: Expected at least an argument passed 0.",'Lynx/ErrorComponents/SyntaxException', 789);
         }
 
         $this->routeArray[$this->instance_key_old]['middlewares'] = $middlewares;
@@ -181,10 +182,10 @@ class Route{
         return $this;
     }
 
-    public function of($class)
+    public function of($class): void
     {
         if (!class_exists($class)) {
-            throw new LynxException("LYNX707: Class ".($class)." not found.",'Lynx/Component/AccessException', 707);
+            throw new LynxException("LYNX707: Class ".($class)." not found.",'Lynx/ErrorComponents/AccessException', 707);
         }
 
         $this->routeArray[$this->instance_key_old]['class'] = $class;
@@ -213,7 +214,7 @@ class Route{
 
         $currentRoute = $_SERVER['REQUEST_URI'];
         $explodeCurrentRoute = array_filter(explode('/', $currentRoute));
-
+        
         try {
             $rootDirectory = explode('\\', root_path());
             $explodeCurrentRoute = array_values(removeNeighbours($rootDirectory, $explodeCurrentRoute));
@@ -224,7 +225,7 @@ class Route{
                 if (empty($route['params'])) {
                     $readableURI = array_values($route['uri'][0]);
                 } 
-
+                
                 $mainPrefix = [];
 
                 foreach ((is_array($route['prefix']) ? $route['prefix'] : [$route['prefix']]) as $thisPrefix) {
@@ -241,7 +242,7 @@ class Route{
                             $isURICorrect = false;
                         }
                     }
-    
+
                     if ($isURICorrect) {
                         if (@count($readableURI) == @count($explodeCurrentRoute)) {
                             $finalRequest = @array_combine($readableURI, $explodeCurrentRoute);
@@ -251,6 +252,7 @@ class Route{
                                     }
                                 }
                             $dispatchable = ['parser' => true, 'request' => $finalRequest, 'class' => $route['class'], 'method' => $route['method'], 'http_method' => $route['uri'][1], 'middleware' => $route['middlewares']];
+
                             break;
                         } else {
                             continue;
@@ -267,23 +269,23 @@ class Route{
             if ($dispatchable['parser']) {
     
             if ($_SERVER["REQUEST_METHOD"] !== $dispatchable['http_method']) {
-                throw new LynxException("LYNX701: ".$dispatchable['http_method']." Method is not supported for this request.",'Lynx/Component/HttpException', 701);
+                throw new LynxException("LYNX701: ".$dispatchable['http_method']." Method is not supported for this request.",'Lynx/ErrorComponents/HttpException', 701);
             }
 
             if ($_SERVER["REQUEST_METHOD"] !== 'GET' && !isset($_POST['_token'])) {
-                throw new LynxException("LYNX719: CSRF token not found.",'Lynx/Component/SecurityException', 719);
+                throw new LynxException("LYNX719: CSRF token not found.",'Lynx/ErrorComponents/SecurityException', 719);
             }
 
             if ($_SERVER["REQUEST_METHOD"] !== 'GET' && isset($_POST['_token'])  && $_POST['_token'] !== $_SESSION['_token']) {
-                throw new LynxException("LYNX720: CSRF token mismatched.",'Lynx/Component/SecurityException', 719);
+                throw new LynxException("LYNX720: CSRF token mismatched.",'Lynx/ErrorComponents/SecurityException', 719);
             }
 
             if (!class_exists($dispatchable['class'])) {
-                throw new LynxException("LYNX707: Class ".($dispatchable['class'])." does not exists.",'Lynx/Component/AccessException', 707);
+                throw new LynxException("LYNX707: Class ".($dispatchable['class'])." does not exists.",'Lynx/ErrorComponents/AccessException', 707);
             }
 
             if (!method_exists($dispatchable['class'], $dispatchable['method'])) {
-                throw new LynxException("LYNX707: Method ".($dispatchable['class'])."::".($dispatchable['method'])." does not exists.",'Lynx/Component/AccessException', 707);
+                throw new LynxException("LYNX707: Method ".($dispatchable['class'])."::".($dispatchable['method'])." does not exists.",'Lynx/ErrorComponents/AccessException', 707);
             }
 
             Request::requestifier($dispatchable['request']);
@@ -294,11 +296,11 @@ class Route{
 
                 foreach ($dispatchable['middleware'] as $eachMiddlware) {
                     if (@count($eachMiddlware) !== 2) {
-                        throw new LynxException("LYNX789: Expected two argument passed ".(@count($eachMiddlware)).".",'Lynx/Component/SyntaxException', 789);
+                        throw new LynxException("LYNX789: Expected two argument passed ".(@count($eachMiddlware)).".",'Lynx/ErrorComponents/SyntaxException', 789);
                     }
 
                     if(!in_array($eachMiddlware[0], $middlewareHandler->group)){
-                        throw new LynxException("LYNX707: Class ".($eachMiddlware[0])." does not exists or not registered.",'Lynx/Component/AccessException', 707);
+                        throw new LynxException("LYNX707: Class ".($eachMiddlware[0])." does not exists or not registered.",'Lynx/ErrorComponents/AccessException', 707);
                     }
 
                     try {
@@ -306,22 +308,22 @@ class Route{
                         $middlewareObject->handle(new Request(), $eachMiddlware[1]);
 
                     } catch (\Exception $e) {
-                        throw new LynxException($e->getMessage(), 'Lynx/Component/ExceptionException', 000);
+                        throw new LynxException($e->getMessage(), 'Lynx/ErrorComponents/ExceptionException', 000);
                     }
                 }
 
             }
-
+            
                 $object = new $dispatchable['class']();
                 $stringableMethod = strval($dispatchable['method']);
                 $object->$stringableMethod(new Request());
     
             } else {
-                throw new LynxException("LYNX701: ".$_SERVER['REQUEST_URI']." does not exist in your route collection.",'Lynx/Component/HttpException', 701);
+                throw new LynxException("LYNX701: ".$_SERVER['REQUEST_URI']." does not exist in your route collection.",'Lynx/ErrorComponents/HttpException', 701);
             }
 
         } catch (\Exception $e) {
-                throw new LynxException("LYNX000: ".$e->getMessage().".",'Lynx/Component/ExceptionException', 000);
+                throw new LynxException("LYNX000: ".$e->getMessage().".",'Lynx/ErrorComponents/ExceptionException', 000);
         }
 
     }

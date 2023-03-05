@@ -8,8 +8,9 @@ use App\Middleware\PreventionGate;
 use Lynx\System\Routes\Route;
 
 Route::collection(function($route){
+    $route->get()->method('index')->terminate();
     $route->get('dashboard')->method('index')->terminate();
-})->prefix('admin')->middleware([PreventionGate::class, []])->of(BlogController::class);
+})->prefix('admin', 'subadmin')->middleware([PreventionGate::class, []])->of(BlogController::class);
 
 Route::collection(function($callable){
     $callable->get('ello')->method('hello')->alias('five')->end();
@@ -24,4 +25,6 @@ Route::collection(function($callable){
 
 Route::collection(function($callable){
     $callable->get('test')->method('test')->alias('test')->end();
-})->of(TestController::class);
+})->prefix('testable')->of(TestController::class);
+
+// Route::get('testable', 'test')->method('test')->of(TestController::class);
