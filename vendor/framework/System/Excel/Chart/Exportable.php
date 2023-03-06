@@ -294,8 +294,8 @@ class Exportable extends ExportableModel
         if ($isMD) {
 
         } else {
-            $xAxisTickValues = new DataSeriesValues(DataSeriesValues::DATASERIES_TYPE_STRING, 'Worksheet!$A$1:$A$' . strval(count($chartData)) . '', null, count($chartData));
-            $dataSeriesValues = new DataSeriesValues(DataSeriesValues::DATASERIES_TYPE_STRING, 'Worksheet!$B$1:$B$'. strval(count($chartData)) . '', null, count($chartData));
+            $xAxisTickValues = [new DataSeriesValues(DataSeriesValues::DATASERIES_TYPE_STRING, 'Worksheet!$A$1:$A$' . strval(count($chartData)) . '', null, count($chartData))];
+            $dataSeriesValues = [new DataSeriesValues(DataSeriesValues::DATASERIES_TYPE_STRING, 'Worksheet!$B$1:$B$'. strval(count($chartData)) . '', null, count($chartData))];
         }
         
         if ($chartType == 'line') {
