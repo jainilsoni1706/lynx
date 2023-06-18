@@ -33,7 +33,7 @@ class DATASET {
 
             $args = func_get_args();
 
-            if (count($args) > 3 && count($args) < 2) {
+            if (count($args) > 3 || count($args) < 2) {
                 throw new ApplicationException("Invalid number of arguments passed to where method", "Lynx/Framework/System/Exception/DatabaseException.php", 500);
             }
 
