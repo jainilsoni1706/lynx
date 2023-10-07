@@ -1,7 +1,7 @@
 {
     "name": "jainilsoni1706/lynx",
     "description": "PHP Micro Framework",
-    "type": "library",
+    "type": "project",
     "license": "MIT",
     "autoload": {
         "psr-4": {
